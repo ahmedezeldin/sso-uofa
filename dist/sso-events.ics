@@ -1,0 +1,34 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SSO UofA//Community Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:SSO UofA Events
+X-WR-TIMEZONE:America/Edmonton
+BEGIN:VEVENT
+UID:sso-nile@ualberta-sudanese-club.classybirch16.chatgpt.site
+DTSTAMP:20261010T015647Z
+SEQUENCE:0
+DTSTART;VALUE=DATE:20260808
+DTEND;VALUE=DATE:20260809
+SUMMARY:Nile Narratives
+DESCRIPTION:An SSO event shared on Instagram\, bringing a Sudanese story 
+ to campus. Date-only archive entry. Start time and venue not verified. S
+ ee the club source. https://www.instagram.com/sso.uofa/p/Dbw0WMyNaQv/
+URL:https://www.instagram.com/sso.uofa/p/Dbw0WMyNaQv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sso-bbq@ualberta-sudanese-club.classybirch16.chatgpt.site
+DTSTAMP:20261010T015647Z
+SEQUENCE:0
+DTSTART;VALUE=DATE:20260918
+DTEND;VALUE=DATE:20260919
+SUMMARY:Community & solidarity BBQ
+DESCRIPTION:A shared campus announcement centred on food\, connection and
+  solidarity. Date-only archive entry. Start time and venue not verified.
+  See the club source. https://www.instagram.com/sjp.uofa/p/Dc_4t6ikvrI/
+URL:https://www.instagram.com/sjp.uofa/p/Dc_4t6ikvrI/
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
