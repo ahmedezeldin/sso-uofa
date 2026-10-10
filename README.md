@@ -1,6 +1,8 @@
 # SSO UofA website
 
-Public website: https://ahmedezeldin.github.io/sso-uofa/
+Public website: https://ahmedezeldin.com/sso-uofa/
+
+GitHub Pages address: https://ahmedezeldin.github.io/sso-uofa/ (redirects to the existing account-level custom domain). Hosting uses GitHub Pages free hosting; no new domain was purchased.
 
 A bilingual student community website with events, a shared calendar subscription, volunteer information and merchandise galleries.
 
@@ -10,7 +12,7 @@ Edit files in `dist/` and push to `main`. GitHub Actions regenerates the calenda
 
 ## Preview locally
 
-From the parent directory: `python3 -m http.server 8767` and open http://localhost:8767/sso-uofa-github/dist/index.html . For the correct GitHub path, create a local `sso-uofa` link to this repository's `dist` directory and open http://localhost:8767/sso-uofa/ .
+Serve the `dist` directory under the `/sso-uofa/` path so navigation matches the published site. The deployment has no dependencies or build step beyond regenerating the calendar feed.
 
 ## Launch status
 
