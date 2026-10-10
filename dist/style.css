@@ -196,3 +196,5 @@ body:not([data-page=home]) main>section:first-of-type{border-top:0}
 
 /* Use drawn icons so iOS cannot substitute coloured emoji. */
 .menu{color:var(--maroon)}.menu-bars{display:flex;flex-direction:column;justify-content:center;gap:4px;width:16px;height:20px}.menu-bars i{display:block;width:16px;height:1.5px;background:currentColor}.ticker-star{display:block;width:18px;height:18px}.ticker i{display:flex;align-items:center;justify-content:center}
+
+@media(max-width:760px){.ticker{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;padding:16px 20px;overflow:visible;font-size:10px;letter-spacing:1px}.ticker span{flex:0 0 auto;max-width:100%;white-space:normal;text-align:center}.ticker i{flex:0 0 12px}.ticker-star{width:12px;height:12px}}
