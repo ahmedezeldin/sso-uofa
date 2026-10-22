@@ -216,6 +216,31 @@ export const campusTools = [
 ];
 
 // ---------------------------------------------------------------------------
+// Little Sudanese touches
+// ---------------------------------------------------------------------------
+// Sudanese sayings; the footer shows a random one on each visit.
+// `en` is the English gloss, `note` the short Arabic explanation shown on Arabic pages.
+export const proverbs = [
+  { ar: "اللقمة الهنية بتكفي مية", en: "A meal shared with a good heart feeds a hundred.", note: "الأكل بالمحبة بيكفي الكل." },
+  { ar: "الجار قبل الدار", en: "Choose your neighbour before your house.", note: "الناس قبل المكان." },
+  { ar: "إيد على إيد تجدع بعيد", en: "Hands together throw farther.", note: "بالتعاون بنوصل أبعد." },
+  { ar: "البيت بيتك", en: "Make yourself at home. (Literally: the house is your house.)", note: "حبابك عشرة." },
+];
+
+// Words that scroll across the band under the hero. Entries with `lang: "ar"` show in Arabic on both pages.
+export const tickerWords = [
+  { text: L("Culture", "ثقافة") },
+  { text: "لمة سودانية", lang: "ar" },
+  { text: L("Shai bi laban", "شاي بلبن") },
+  { text: L("Connection", "تواصل") },
+  { text: L("Legaimat", "لقيمات") },
+  { text: "حبابك عشرة", lang: "ar" },
+  { text: L("Community", "مجتمع") },
+  { text: L("Karkadeh", "كركدي") },
+  { text: L("Ful on Fridays", "فول الجمعة") },
+];
+
+// ---------------------------------------------------------------------------
 // FAQ (home page)
 // ---------------------------------------------------------------------------
 export const faqs = [
@@ -252,6 +277,20 @@ export const faqs = [
     a: L(
       "Not yet. The first collection is still being sampled. Prices on the site are estimates, and the pre-order window will be announced on Instagram.",
       "ليس بعد. المجموعة الأولى ما زالت في مرحلة العينات. الأسعار في الموقع تقديرية، وسيُعلن عن فترة الطلب المسبق على إنستغرام.",
+    ),
+  },
+  {
+    q: L("Will there be food?", "في أكل؟"),
+    a: L(
+      "Is that even a question? Expect legaimat, shai bi laban and, if we’re lucky, someone’s mum’s cooking.",
+      "دا سؤال؟ لقيمات وشاي بلبن، ولو حظنا حلو، أكل من إيد أم واحد فينا.",
+    ),
+  },
+  {
+    q: L("Do events start on time?", "الفعاليات بتبدأ في وقتها؟"),
+    a: L(
+      "We aim for it. Sudanese time is real, but the shai is ready whenever you arrive.",
+      "بنحاول. الوقت السوداني حقيقة، بس الشاي جاهز متين ما جيت.",
     ),
   },
   {

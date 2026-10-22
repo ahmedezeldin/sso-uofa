@@ -45,6 +45,10 @@ Events move from "Upcoming" to "Past" on their own. The calendar feed (`/sso-eve
 
 Put portraits in `src/assets/team/` (portrait orientation, about 800×1000, JPEG), then add `photo: "team/name.jpg"` to that person in `team`.
 
+### Sudanese touches
+
+There are a few easter eggs to keep: click the jebena, the sun or the felucca in the home illustration; type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
+
 ## Running it locally
 
 You need [Node.js](https://nodejs.org) 20 or newer. No packages to install.

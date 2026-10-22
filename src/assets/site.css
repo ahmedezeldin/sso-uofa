@@ -513,12 +513,12 @@ html[dir="rtl"] .page-head::before {
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.25fr 1fr;
   align-items: center;
   gap: clamp(32px, 5vw, 64px);
 }
 .hero h1 {
-  font-size: clamp(48px, 7vw, 92px);
+  font-size: clamp(44px, 5.4vw, 70px);
   letter-spacing: -0.025em;
   margin-bottom: 24px;
 }
@@ -533,6 +533,7 @@ html[lang="ar"] .hero h1 {
 }
 .hero-art {
   position: relative;
+  width: 100%;
   margin: 0;
   max-width: 520px;
   justify-self: center;
@@ -572,28 +573,174 @@ html[lang="ar"] .hero-art figcaption {
   padding-block: 18px;
   overflow: hidden;
 }
-.ticker .wrap {
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 48s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+.ticker-set {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 28px;
+  padding-inline-end: 28px;
   font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+.ticker-set [lang="ar"] {
+  font-size: 16px;
+  letter-spacing: 0;
 }
 .ticker svg {
   width: 14px;
   flex: none;
 }
-@media (max-width: 640px) {
-  .ticker .wrap > :nth-child(n + 4) {
-    display: none;
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
   }
-  .ticker .wrap {
-    justify-content: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
   }
+}
+
+/* Easter eggs ------------------------------------------------------------- */
+.hero-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.egg {
+  cursor: pointer;
+}
+.egg-jebena:hover > g,
+.egg-felucca:hover > g {
+  filter: brightness(1.06);
+}
+.egg-sun .sun-halo,
+.egg-felucca,
+.steam {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.egg-sun.play .sun-halo {
+  animation: halo 1.6s ease-out 2;
+}
+.egg-felucca.play {
+  animation: sail 5s ease-in-out;
+}
+.egg-jebena.play .steam {
+  animation: steam 1.4s ease-out 3;
+}
+@keyframes halo {
+  50% {
+    transform: scale(1.25);
+    opacity: 0.6;
+  }
+}
+@keyframes sail {
+  45% {
+    transform: translateX(150px) rotate(-2deg);
+  }
+  55% {
+    transform: translateX(150px) scaleX(-1);
+  }
+}
+@keyframes steam {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .egg.play,
+  .egg.play * {
+    animation: none !important;
+  }
+}
+
+.egg-toast {
+  position: fixed;
+  inset-inline: 16px;
+  bottom: 24px;
+  z-index: 60;
+  width: fit-content;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: 14px 22px;
+  border-radius: 16px;
+  background: var(--maroon);
+  color: var(--on-dark);
+  box-shadow: 0 10px 30px rgb(44 40 36 / 0.25);
+  font-weight: 500;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+.egg-toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  to {
+    transform: translate(var(--drift), 110vh) rotate(var(--spin));
+  }
+}
+
+/* Footer proverb */
+.proverb {
+  margin: 24px 0 0;
+  padding-inline-start: 16px;
+  border-inline-start: 3px solid var(--terracotta);
+}
+.proverb blockquote {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--maroon);
+}
+.proverb figcaption {
+  font-size: 15px;
+  color: var(--muted);
+}
+.friday {
+  font-weight: 700;
+  color: var(--green);
 }
 
 /* Home: about ------------------------------------------------------------- */

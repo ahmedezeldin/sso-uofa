@@ -135,4 +135,92 @@
       }),
     );
   }
+  // Sudanese easter eggs -----------------------------------------------------
+  // Click the jebena, the sun or the felucca in the hero; type "shai" or "sudan"
+  // anywhere; look at the footer on a Friday.
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let messages = {};
+  try {
+    messages = JSON.parse($("#egg-messages")?.textContent || "{}");
+  } catch {}
+  let toastTimer;
+  const toast = (text) => {
+    let el = $(".egg-toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "egg-toast";
+      el.setAttribute("role", "status");
+      document.body.append(el);
+    }
+    el.textContent = text;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 5000);
+  };
+  const replay = (el) => {
+    el.classList.remove("play");
+    el.getBoundingClientRect();
+    el.classList.add("play");
+  };
+
+  const hero = $(".hero-art");
+  if (hero) {
+    $$("[data-egg]", hero).forEach((part) =>
+      part.addEventListener("click", () => {
+        const key = "egg" + part.dataset.egg[0].toUpperCase() + part.dataset.egg.slice(1);
+        toast(hero.dataset[key]);
+        replay(part);
+      }),
+    );
+  }
+
+  const flagConfetti = () => {
+    if (reduceMotion) return;
+    const colours = ["#d21034", "#ffffff", "#000000", "#007229"];
+    const layer = document.createElement("div");
+    layer.className = "confetti";
+    layer.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 70; i++) {
+      const bit = document.createElement("i");
+      bit.style.cssText = `left:${Math.random() * 100}%;background:${colours[i % 4]};animation-delay:${Math.random() * 0.8}s;animation-duration:${2.2 + Math.random() * 1.6}s;--drift:${(Math.random() - 0.5) * 160}px;--spin:${Math.random() * 720}deg`;
+      layer.append(bit);
+    }
+    document.body.append(layer);
+    setTimeout(() => layer.remove(), 4800);
+  };
+
+  let typed = "";
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest?.("input, textarea, select") || e.ctrlKey || e.metaKey || e.key.length !== 1) return;
+    typed = (typed + e.key.toLowerCase()).slice(-12);
+    if (typed.endsWith("shai") || typed.endsWith("شاي")) {
+      toast(messages.shai);
+      typed = "";
+    } else if (typed.endsWith("sudan") || typed.endsWith("سودان")) {
+      toast(messages.sudan);
+      flagConfetti();
+      typed = "";
+    }
+  });
+
+  // A different Sudanese saying in the footer on each visit.
+  const proverb = $(".proverb");
+  if (proverb) {
+    try {
+      const list = JSON.parse(proverb.dataset.proverbs);
+      const pick = list[Math.floor(Math.random() * list.length)];
+      $("blockquote", proverb).textContent = pick.ar;
+      $("figcaption", proverb).textContent = pick.gloss;
+    } catch {}
+  }
+
+  // Jumu'ah Mubarak on Fridays (Edmonton time).
+  const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/Edmonton", weekday: "long" }).format(new Date());
+  if (weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
+
+  console.log(
+    "%cأهلاً بيك! %cKef al-hal? Curious how this site is built? github.com/ahmedezeldin/sso-uofa",
+    "font: 700 20px sans-serif; color: #612c32",
+    "font: 14px sans-serif; color: #675e54",
+  );
 })();

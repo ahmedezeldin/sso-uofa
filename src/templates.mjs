@@ -9,7 +9,16 @@ import {
   newStudentLinks,
   campusTools,
   faqs,
+  proverbs,
+  tickerWords,
 } from "./content.mjs";
+import fs from "node:fs";
+
+// The hero illustration is inlined so its jebena, sun and felucca can react to clicks (see site.js).
+const heroSvg = fs
+  .readFileSync(new URL("./assets/heritage.svg", import.meta.url), "utf8")
+  .replace(/<svg[^>]*>/, '<svg class="hero-svg" viewBox="0 0 600 660" role="img" aria-labelledby="hero-art-title">')
+  .replace("<title>", '<title id="hero-art-title">');
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -67,7 +76,7 @@ function price(c, n) {
 // ---------------------------------------------------------------------------
 export function layout(c, key, main) {
   const page = pages[key];
-  const title = page.title ? `${c.t(page.title)} · SSO UofA` : c.tr("SSO UofA · A little Sudan on campus", "منظمة الطلاب السودانيين · جامعة ألبرتا");
+  const title = page.title ? `${c.t(page.title)} · SSO UofA` : c.tr("SSO UofA · Sudanese Students Organization at the University of Alberta", "منظمة الطلاب السودانيين · جامعة ألبرتا");
   const other = c.lang === "en" ? "ar" : "en";
   const langSwitch = c.urlFor(key, other);
   const canonical = site.url + c.urlFor(key).slice(site.basePath.length - 1);
@@ -103,6 +112,10 @@ export function layout(c, key, main) {
       : ""
   }</script>
 <script src="${c.asset("site.js")}" defer></script>
+<script type="application/json" id="egg-messages">${JSON.stringify({
+    shai: c.tr("Shai with milk or without? (With. Obviously.)", "شاي بلبن ولا سادة؟ (بلبن طبعاً)"),
+    sudan: c.tr("السودان في القلب · Sudan, always in our hearts.", "السودان في القلب."),
+  }).replace(/</g, "\\u003c")}</script>
 </head>
 <body data-page="${key.startsWith("product-") ? "product" : key}">
 <a class="skip" href="#main">${c.tr("Skip to content", "انتقل إلى المحتوى")}</a>
@@ -133,6 +146,10 @@ ${main}
     <div>
       <a class="brand" href="${c.urlFor("home")}"><img src="${c.asset("club-logo.jpg")}" alt="" width="44" height="44" loading="lazy"><span><b>SSO <span>UofA</span></b><small>${c.tr("Sudanese Students Organization", "منظمة الطلاب السودانيين")}</small></span></a>
       <p>${c.tr("Sudanese roots. Edmonton connections. A shared home at the University of Alberta.", "جذور سودانية وروابط في إدمونتون. بيت يجمعنا في جامعة ألبرتا.")}</p>
+      <figure class="proverb" data-proverbs="${esc(JSON.stringify(proverbs.map((p) => ({ ar: p.ar, gloss: c.lang === "en" ? p.en : p.note }))))}">
+        <blockquote lang="ar">${proverbs[0].ar}</blockquote>
+        <figcaption>${c.lang === "en" ? proverbs[0].en : proverbs[0].note}</figcaption>
+      </figure>
     </div>
     <nav aria-label="${c.tr("Footer", "تذييل الصفحة")}">
       <ul class="footer-links">
@@ -144,7 +161,7 @@ ${main}
   </div>
   <div class="wrap footer-bottom">
     <p>${c.tr("We acknowledge that Edmonton is on Treaty 6 territory and the Métis homeland.", "نقر بأن إدمونتون تقع على أراضي المعاهدة السادسة وموطن شعب الميتي.")}</p>
-    <p>© ${c.year} SSO UofA · ${c.tr("From Sudan, with love.", "من السودان، بكل حب.")}</p>
+    <p><span class="friday" hidden>${c.tr("Jumu‘ah Mubarak", "جمعة مباركة")} · </span>© ${c.year} SSO UofA · ${c.tr("From Sudan, with love.", "من السودان، بكل حب.")}</p>
   </div>
 </footer>
 </body>
@@ -205,7 +222,7 @@ function eventLists(c, today) {
 
 function upcomingEmpty(c) {
   return `<div class="empty-state" data-upcoming-empty>
-  <h3>${c.tr("No dates announced just yet.", "لا توجد مواعيد معلنة بعد.")}</h3>
+  <h3>${c.tr("No dates yet. The shai’s still brewing.", "لسه ما في مواعيد. الشاي لسه بيتعمل.")}</h3>
   <p>${c.tr("New gatherings are posted on Instagram first. Subscribe to the club calendar and they’ll appear in yours automatically.", "تُنشر اللقاءات الجديدة على إنستغرام أولاً. اشترك في تقويم المنظمة وستظهر في تقويمك تلقائياً.")}</p>
   <p class="actions"><a class="button" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe to the calendar", "اشترك في التقويم")}</a><a class="button ghost" href="${site.instagram}" ${external}>${c.tr("Follow on Instagram", "تابعنا على إنستغرام")} ${extIcon()}</a></p>
 </div>`;
@@ -263,23 +280,26 @@ function homePage(c) {
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <p class="eyebrow">${c.tr("University of Alberta · Edmonton", "جامعة ألبرتا · إدمونتون")}</p>
-      <h1>${c.tr("A little Sudan.<br>A lot of <em>home.</em>", "شوية سودان.<br>كتير من <em>دفء البيت.</em>")}</h1>
+      <h1>${c.tr("Wherever we gather,<br>it’s <em>home.</em>", "وين ما اتلمّينا،<br>دا <em>البيت.</em>")}</h1>
       <p class="lead">${c.tr("Culture that connects us and friendships that stay with us. A home on campus for Sudanese students, and for everyone curious to share in it.", "ثقافة تجمعنا وصداقات تبقى معنا. بيت في الجامعة للطلاب السودانيين ولكل من يرغب في مشاركتنا.")}</p>
       <p class="actions">
         <a class="button" href="${site.membership}" ${external}>${c.tr("Become a member, it’s free", "انضم للمنظمة مجاناً")}</a>
         <a class="button ghost" href="${c.urlFor("events")}">${c.tr("See what’s on", "شوف الفعاليات")}</a>
       </p>
     </div>
-    <figure class="hero-art">
-      <img src="${c.asset("heritage.svg")}" alt="" width="560" height="560" fetchpriority="high">
+    <figure class="hero-art"
+      data-egg-jebena="${esc(c.tr("The jebena’s always on. Come for coffee, leave with friends.", "الجبنة دايماً شغالة. تعال اشرب جبنة وارجع بأصحاب."))}"
+      data-egg-sun="${esc(c.tr("We brought the Khartoum sun with us. Edmonton winter doesn’t scare us.", "جبنا شمس الخرطوم معانا… شتاء إدمنتون ما بيخوفنا."))}"
+      data-egg-felucca="${esc(c.tr("All aboard! Next stop: Al-Mogran, where the Blue and White Nile meet.", "اركب المركب! المحطة الجاية المقرن، ملتقى النيلين."))}">
+      ${heroSvg}
       <span class="hero-note" lang="ar" dir="rtl">أهلاً بيك</span>
       <figcaption>${c.tr("A little piece of home, wherever we go.", "حتة من البيت، وين ما مشينا.")}</figcaption>
     </figure>
   </div>
 </section>
-<div class="ticker" aria-hidden="true"><div class="wrap">
-  <span>${c.tr("Culture", "ثقافة")}</span>${star}<span>${c.tr("Connection", "تواصل")}</span>${star}<span>${c.tr("Community", "مجتمع")}</span>${star}<span lang="ar">لمة سودانية</span>
-</div></div>
+<div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
+  .map(() => `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`)
+  .join("")}</div></div>
 <section class="wrap section about" aria-labelledby="about-title">
   ${sectionHead(c, {
     id: "about-title",
@@ -302,7 +322,7 @@ function homePage(c) {
     <div class="event-grid" data-event-list="upcoming">${upcoming.slice(0, 3).map((e) => eventCard(c, e)).join("")}</div>
     <div data-upcoming-empty${upcoming.length ? " hidden" : ""}>
       <div class="next-note">
-        <p><b>${c.tr("No new dates announced just yet.", "لا توجد مواعيد جديدة بعد.")}</b> ${c.tr("Subscribe to the club calendar and new gatherings appear in yours automatically. Until then, here’s what we’ve been up to.", "اشترك في تقويم المنظمة وستظهر اللقاءات الجديدة في تقويمك تلقائياً. وإلى ذلك الحين، هذا ما كنا نفعله.")}</p>
+        <p><b>${c.tr("No new dates yet. The shai’s still brewing.", "لسه ما في مواعيد جديدة. الشاي لسه بيتعمل.")}</b> ${c.tr("Subscribe to the club calendar and new gatherings appear in yours automatically. Until then, here’s what we’ve been up to.", "اشترك في تقويم المنظمة وستظهر اللقاءات الجديدة في تقويمك تلقائياً. وإلى ذلك الحين، هذا ما كنا نفعله.")}</p>
         <a class="button small" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe", "اشترك")}</a>
       </div>
       <div class="event-grid" data-event-list="recent">${recent.map((e) => eventCard(c, e)).join("")}</div>
@@ -565,8 +585,8 @@ function contactPage(c) {
 export function notFoundPage(c) {
   return `${pageHead(c, {
     kicker: "404",
-    title: c.tr("This page wandered off.", "هذه الصفحة تاهت."),
-    intro: c.tr("The link may be old, or the page may have moved.", "قد يكون الرابط قديماً، أو انتقلت الصفحة."),
+    title: c.tr("This page went out for ful and never came back.", "الصفحة دي مشت تجيب فول وما رجعت."),
+    intro: c.tr("The link may be old, or the page may have moved. Let’s get you back to the lamma.", "ممكن الرابط قديم أو الصفحة اتنقلت. خلينا نرجعك للمة."),
   })}
 <div class="wrap section"><p class="actions"><a class="button" href="${c.urlFor("home")}">${c.tr("Back to home", "العودة للرئيسية")}</a><a class="button ghost" href="${c.urlFor("events")}">${c.tr("See events", "شوف الفعاليات")}</a></p></div>`;
 }
