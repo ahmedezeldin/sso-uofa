@@ -163,7 +163,7 @@
     el.classList.add("play");
   };
 
-  const hero = $(".hero-art");
+  const hero = $("[data-egg-jebena]");
   if (hero) {
     $$("[data-egg]", hero).forEach((part) =>
       part.addEventListener("click", () => {
@@ -217,6 +217,66 @@
   // Jumu'ah Mubarak on Fridays (Edmonton time).
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/Edmonton", weekday: "long" }).format(new Date());
   if (weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
+
+  // Living illustration ------------------------------------------------------
+  // On narrow screens, anchor the hero landscape on the pyramids side so they stay in view.
+  const scene = $(".hero-scene");
+  if (scene) {
+    const narrow = matchMedia("(max-width: 700px)");
+    const anchor = () => scene.setAttribute("preserveAspectRatio", narrow.matches ? "xMaxYMax slice" : "xMidYMax slice");
+    narrow.addEventListener("change", anchor);
+    anchor();
+  }
+
+  // Hero layers drift at different speeds as you scroll (parallax).
+  const layers = $$(".hero-scene [data-depth]");
+  if (layers.length && !reduceMotion) {
+    let queued = false;
+    const move = () => {
+      const y = Math.min(scrollY, 1000);
+      layers.forEach((l) => (l.style.transform = `translateY(${(y * Number(l.dataset.depth)).toFixed(1)}px)`));
+      queued = false;
+    };
+    addEventListener("scroll", () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(move);
+      }
+    }, { passive: true });
+  }
+
+  // The felucca in the header sails as far along the Nile as you've read.
+  const voyage = $(".voyage");
+  if (voyage) {
+    const sail = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      voyage.style.setProperty("--progress", max > 0 ? Math.min(1, scrollY / max).toFixed(4) : "0");
+    };
+    addEventListener("scroll", sail, { passive: true });
+    addEventListener("resize", sail);
+    sail();
+  }
+
+  // Content rises into view, a little staggered within each group.
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const targets = $$(".section-head, .values li, .event-card, .merch-card, .link-card, .steps li, .team-card, .card, .subscribe, .prayer-grid li, .join-ways li, .faq-list details, .empty-state, .next-note, .notice");
+    const seen = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("in");
+          seen.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    targets.forEach((el) => {
+      const siblings = [...el.parentElement.children];
+      el.style.setProperty("--rd", `${Math.min(siblings.indexOf(el), 6) * 0.08}s`);
+      el.classList.add("reveal");
+      seen.observe(el);
+    });
+  }
 
   console.log(
     "%cأهلاً بيك! %cKef al-hal? Curious how this site is built? github.com/ahmedezeldin/sso-uofa",

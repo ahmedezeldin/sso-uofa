@@ -47,7 +47,9 @@ Put portraits in `src/assets/team/` (portrait orientation, about 800×1000, JPEG
 
 ### Sudanese touches
 
-There are a few easter eggs to keep: click the jebena, the sun or the felucca in the home illustration; type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
+The illustration is a kit of parts in [`src/art.mjs`](src/art.mjs) (sun, Meroë pyramids, doum palms, the Nile, felucca, jebena, textiles) reused across the site: the home landscape, a small scene in each page header, the footer skyline, the felucca that sails along the header as you scroll, and the Nile-wave section edges. All animation stops for visitors who prefer reduced motion.
+
+There are a few easter eggs to keep: click the jebena (on the picnic rug), the sun or the felucca in the home landscape; type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
 
 ## Running it locally
 
@@ -68,6 +70,7 @@ When you change an event, the build also updates `calendar-revisions.json`. Comm
 ```
 src/content.mjs      all text and data
 src/templates.mjs    page layouts (HTML)
+src/art.mjs          the illustration kit (SVG) and scenes
 src/assets/          CSS, the small site.js, images
 scripts/build.mjs    renders every page in both languages, calendar feeds, sitemap, redirects
 scripts/serve.mjs    local preview server

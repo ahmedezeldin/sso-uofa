@@ -450,72 +450,80 @@ html[dir="rtl"] .ext {
 }
 
 /* Page heads -------------------------------------------------------------- */
-/* Inner-page header band with a Sudanese textile motif fading in from the end side. */
+/* Inner-page header band; each page has its own small animated scene on the end side. */
 .page-head {
   position: relative;
   overflow: hidden;
   padding-block: clamp(48px, 7vw, 88px) clamp(40px, 5vw, 64px);
   background: var(--sand);
-  border-bottom: 1px solid var(--line);
-}
-.page-head::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  width: min(46%, 560px);
-  background: var(--maroon);
-  opacity: 0.11;
-  -webkit-mask: url("pattern.svg") 0 0 / 56px 56px;
-  mask: url("pattern.svg") 0 0 / 56px 56px;
-}
-.page-head::before {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  width: min(46%, 560px);
-  z-index: 1;
-  background: linear-gradient(to right, var(--sand), transparent 70%);
-}
-html[dir="rtl"] .page-head::before {
-  background: linear-gradient(to left, var(--sand), transparent 70%);
 }
 .page-head .wrap {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
-@media (max-width: 700px) {
-  .page-head::after,
-  .page-head::before {
-    width: 40%;
+.page-head .section-head {
+  max-width: min(58%, 720px);
+}
+.vignette {
+  position: absolute;
+  inset-inline-end: 0;
+  bottom: 0;
+  width: min(50%, 660px);
+  height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
+  mask-image: linear-gradient(to right, transparent, #000 22%);
+}
+html[dir="rtl"] .vignette,
+html[dir="rtl"] .hero-scene,
+html[dir="rtl"] .skyline {
+  transform: scaleX(-1);
+}
+@media (max-width: 860px) {
+  .page-head {
+    padding-bottom: 0;
+  }
+  .page-head .section-head {
+    max-width: none;
+  }
+  .vignette {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 150px;
+    margin-top: 12px;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 
-/* A thin textile border used above the footer and on dark bands. */
+/* Footer skyline */
 .site-footer {
   position: relative;
+  border-top: 0;
 }
-.site-footer::before {
-  content: "";
+.skyline {
   position: absolute;
   inset-inline: 0;
-  top: -1px;
-  height: 14px;
-  background: var(--sand-deep);
-  -webkit-mask: url("pattern.svg") 0 0 / 14px 14px;
-  mask: url("pattern.svg") 0 0 / 14px 14px;
+  bottom: calc(100% - 1px);
+  display: block;
+  width: 100%;
+  height: clamp(56px, 7vw, 90px);
 }
 
 /* Home: hero -------------------------------------------------------------- */
 .hero {
-  padding-block: clamp(32px, 6vw, 72px) clamp(40px, 6vw, 64px);
+  --scene-h: clamp(250px, 38vw, 540px);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--cream) 0%, #f8ead2 42%, #f3d5aa 100%);
 }
-.hero-grid {
+.hero-inner {
+  position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  align-items: center;
-  gap: clamp(32px, 5vw, 64px);
+  grid-template-columns: 1.35fr 1fr;
+  gap: 40px;
+  padding-block: clamp(36px, 6vw, 76px) calc(var(--scene-h) * 0.55);
 }
 .hero h1 {
   font-size: clamp(44px, 5.4vw, 70px);
@@ -523,7 +531,7 @@ html[dir="rtl"] .page-head::before {
   margin-bottom: 24px;
 }
 html[lang="ar"] .hero h1 {
-  font-size: clamp(42px, 6vw, 76px);
+  font-size: clamp(42px, 5.4vw, 70px);
 }
 .hero h1 em {
   color: var(--terracotta);
@@ -531,39 +539,37 @@ html[lang="ar"] .hero h1 {
 .hero .lead {
   max-width: 46ch;
 }
-.hero-art {
-  position: relative;
+.hero-scene {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
+  display: block;
   width: 100%;
-  margin: 0;
-  max-width: 520px;
-  justify-self: center;
+  height: var(--scene-h);
 }
 .hero-note {
-  position: absolute;
-  inset-inline-end: 4%;
-  top: 2%;
+  align-self: start;
+  justify-self: end;
+  margin: clamp(8px, 3vw, 40px) clamp(0px, 4vw, 60px) 0 0;
   color: var(--maroon);
-  font-size: clamp(26px, 3vw, 36px);
+  font-family: var(--font-arabic);
+  font-size: clamp(30px, 3.6vw, 52px);
   font-weight: 700;
-  transform: rotate(8deg);
+  rotate: -7deg;
 }
-.hero-art figcaption {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-html[lang="ar"] .hero-art figcaption {
-  letter-spacing: 0;
+html[dir="rtl"] .hero-note {
+  margin: clamp(8px, 3vw, 40px) 0 0 clamp(0px, 4vw, 60px);
+  rotate: 7deg;
 }
 @media (max-width: 860px) {
-  .hero-grid {
+  .hero-inner {
     grid-template-columns: 1fr;
+    gap: 8px;
+    padding-bottom: calc(var(--scene-h) * 0.82);
   }
-  .hero-art {
-    max-width: 380px;
+  .hero-note {
+    display: none;
   }
 }
 
@@ -611,47 +617,145 @@ html[lang="ar"] .hero-art figcaption {
   }
 }
 
-/* Easter eggs ------------------------------------------------------------- */
-.hero-svg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-.egg {
-  cursor: pointer;
-}
-.egg-jebena:hover > g,
-.egg-felucca:hover > g {
-  filter: brightness(1.06);
-}
-.egg-sun .sun-halo,
-.egg-felucca,
-.steam {
+/* Living illustration ------------------------------------------------------ */
+/* Every animated piece of artwork; all of it stops for people who prefer reduced motion. */
+.rise,
+.rise-sun,
+.sway,
+.bob,
+.flap,
+.steam path,
+.twinkle,
+.swing,
+.sun-halo {
   transform-box: fill-box;
+}
+.rise {
+  transform-origin: 50% 100%;
+  animation: rise 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both;
+}
+@keyframes rise {
+  from {
+    transform: translateY(45%) scaleY(0.5);
+    opacity: 0;
+  }
+}
+.rise-sun {
+  animation: sun-up 2.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes sun-up {
+  from {
+    transform: translateY(120px);
+    opacity: 0;
+  }
+}
+.sun-halo {
   transform-origin: center;
+  animation: glow 6s ease-in-out infinite;
 }
-.egg-sun.play .sun-halo {
-  animation: halo 1.6s ease-out 2;
-}
-.egg-felucca.play {
-  animation: sail 5s ease-in-out;
-}
-.egg-jebena.play .steam {
-  animation: steam 1.4s ease-out 3;
-}
-@keyframes halo {
+@keyframes glow {
   50% {
-    transform: scale(1.25);
-    opacity: 0.6;
+    transform: scale(1.1);
+    opacity: 0.5;
   }
 }
-@keyframes sail {
-  45% {
-    transform: translateX(150px) rotate(-2deg);
+.sway {
+  transform-origin: 50% 100%;
+  animation: sway 5.5s ease-in-out var(--d, 0s) infinite alternate;
+}
+@keyframes sway {
+  from {
+    transform: rotate(-1.8deg);
   }
-  55% {
-    transform: translateX(150px) scaleX(-1);
+  to {
+    transform: rotate(1.8deg);
   }
+}
+.bob {
+  transform-origin: 50% 100%;
+  animation: bob 3.4s ease-in-out infinite;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-3px) rotate(-2.5deg);
+  }
+}
+.sail-across {
+  animation: sail-across 90s linear infinite;
+}
+.sail-across.slow {
+  animation-duration: 160s;
+}
+@keyframes sail-across {
+  from {
+    transform: translateX(-120px);
+  }
+  to {
+    transform: translateX(1720px);
+  }
+}
+.sail-back {
+  animation: sail-small 34s linear infinite;
+}
+@keyframes sail-small {
+  from {
+    transform: translateX(-60px);
+  }
+  to {
+    transform: translateX(640px);
+  }
+}
+.drift-birds {
+  animation: drift 55s linear infinite;
+}
+.drift-birds.slow {
+  animation: drift-small 28s linear infinite;
+}
+@keyframes drift {
+  from {
+    transform: translateX(1000px);
+  }
+  to {
+    transform: translateX(1760px);
+  }
+}
+@keyframes drift-small {
+  from {
+    transform: translateX(-100px);
+  }
+  to {
+    transform: translateX(680px);
+  }
+}
+.flap {
+  transform-origin: center;
+  animation: flap 0.8s ease-in-out var(--d, 0s) infinite alternate;
+}
+@keyframes flap {
+  to {
+    transform: scaleY(0.55);
+  }
+}
+.flow {
+  animation: flow 14s linear infinite;
+}
+.vignette .flow {
+  animation-name: flow-small;
+  animation-duration: 9s;
+}
+@keyframes flow {
+  to {
+    transform: translateX(-400px);
+  }
+}
+@keyframes flow-small {
+  to {
+    transform: translateX(-200px);
+  }
+}
+.steam path {
+  transform-origin: 50% 100%;
+  animation: steam 2.4s ease-out var(--d, 0s) infinite;
 }
 @keyframes steam {
   from {
@@ -662,14 +766,186 @@ html[lang="ar"] .hero-art figcaption {
     opacity: 1;
   }
   to {
-    transform: translateY(-14px);
+    transform: translateY(-12px);
     opacity: 0;
   }
 }
+.twinkle {
+  transform-origin: center;
+  animation: twinkle 3s ease-in-out var(--d, 0s) infinite;
+}
+@keyframes twinkle {
+  50% {
+    transform: scale(0.4);
+    opacity: 0.3;
+  }
+}
+.swing {
+  transform-origin: 50% 0;
+  animation: swing 3.6s ease-in-out var(--d, 0s) infinite alternate;
+}
+@keyframes swing {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+.float {
+  animation: float 7s ease-in-out var(--d, 0s) infinite;
+}
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Easter eggs ------------------------------------------------------------- */
+.egg {
+  cursor: pointer;
+}
+.egg-felucca.play .bob {
+  animation: hop 0.7s ease-out 2;
+}
+@keyframes hop {
+  40% {
+    transform: translateY(-16px) rotate(-8deg);
+  }
+}
+.egg-sun.play .sun-halo {
+  animation: halo 1.4s ease-out 2;
+}
+@keyframes halo {
+  50% {
+    transform: scale(1.35);
+    opacity: 0.7;
+  }
+}
+.egg-jebena.play .steam path {
+  animation-duration: 0.8s;
+}
+
+/* Section edges shaped like the Nile */
+.band {
+  position: relative;
+  overflow: hidden;
+}
+.wave-edge {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  height: clamp(18px, 2.4vw, 30px);
+  overflow: hidden;
+  pointer-events: none;
+}
+.wave-edge.top {
+  top: -1px;
+  transform: scaleY(-1);
+}
+.wave-edge.bottom {
+  bottom: -1px;
+}
+.wave-edge svg {
+  display: block;
+  width: 200%;
+  max-width: none;
+  height: 100%;
+  animation: wave 40s linear infinite;
+}
+.wave-edge.bottom svg {
+  animation-direction: reverse;
+}
+@keyframes wave {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* A felucca sails along the header as you read */
+.voyage {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--line);
+  pointer-events: none;
+}
+.voyage::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: calc(var(--progress, 0) * 100%);
+  background: #6f9e8f;
+}
+.voyage svg {
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: calc(var(--progress, 0) * (100% - 24px));
+  width: 24px;
+  height: 27px;
+}
+html[dir="rtl"] .voyage svg {
+  transform: scaleX(-1);
+}
+.site-header {
+  border-bottom: 0;
+}
+
+/* A steaming jebena for empty states */
+.brewing {
+  display: block;
+  width: 56px;
+  height: auto;
+  margin-bottom: 12px;
+}
+.next-note .brewing {
+  width: 44px;
+  margin: 0;
+  flex: none;
+}
+
+/* Content rises in as it scrolls into view (only when JavaScript is running) */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--rd, 0s);
+}
+.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .egg.play,
+  .rise,
+  .rise-sun,
+  .sun-halo,
+  .sway,
+  .bob,
+  .flap,
+  .flow,
+  .steam path,
+  .twinkle,
+  .swing,
+  .float,
+  .drift-birds,
+  .sail-back,
+  .wave-edge svg,
   .egg.play * {
     animation: none !important;
+  }
+  .sail-across {
+    animation: none;
+    transform: translateX(560px);
+  }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

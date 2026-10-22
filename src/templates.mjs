@@ -12,13 +12,7 @@ import {
   proverbs,
   tickerWords,
 } from "./content.mjs";
-import fs from "node:fs";
-
-// The hero illustration is inlined so its jebena, sun and felucca can react to clicks (see site.js).
-const heroSvg = fs
-  .readFileSync(new URL("./assets/heritage.svg", import.meta.url), "utf8")
-  .replace(/<svg[^>]*>/, '<svg class="hero-svg" viewBox="0 0 600 660" role="img" aria-labelledby="hero-art-title">')
-  .replace("<title>", '<title id="hero-art-title">');
+import { heroScene, vignette, skyline, waveEdge, voyage, brewing } from "./art.mjs";
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -60,8 +54,9 @@ function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
   ${intro ? `<p class="intro">${intro}</p>` : ""}
 </div>`;
 }
-function pageHead(c, { kicker, title, intro }) {
-  return `<div class="page-head"><div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div></div>`;
+// Inner-page header band; `scene` picks the small animated illustration on its end side (see art.mjs).
+function pageHead(c, { kicker, title, intro, scene }) {
+  return `<div class="page-head"><div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${scene ? vignette(scene) : ""}</div>`;
 }
 
 export function formatDate(c, iso, opts = { year: "numeric", month: "long", day: "numeric" }) {
@@ -137,11 +132,13 @@ export function layout(c, key, main) {
       <a class="button small" href="${site.membership}" ${external}>${c.tr("Become a member", "انضم للمنظمة")}</a>
     </nav>
   </div>
+  ${voyage()}
 </header>
 <main id="main">
 ${main}
 </main>
 <footer class="site-footer">
+  ${skyline()}
   <div class="wrap footer-grid">
     <div>
       <a class="brand" href="${c.urlFor("home")}"><img src="${c.asset("club-logo.jpg")}" alt="" width="44" height="44" loading="lazy"><span><b>SSO <span>UofA</span></b><small>${c.tr("Sudanese Students Organization", "منظمة الطلاب السودانيين")}</small></span></a>
@@ -222,6 +219,7 @@ function eventLists(c, today) {
 
 function upcomingEmpty(c) {
   return `<div class="empty-state" data-upcoming-empty>
+  ${brewing()}
   <h3>${c.tr("No dates yet. The shai’s still brewing.", "لسه ما في مواعيد. الشاي لسه بيتعمل.")}</h3>
   <p>${c.tr("New gatherings are posted on Instagram first. Subscribe to the club calendar and they’ll appear in yours automatically.", "تُنشر اللقاءات الجديدة على إنستغرام أولاً. اشترك في تقويم المنظمة وستظهر في تقويمك تلقائياً.")}</p>
   <p class="actions"><a class="button" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe to the calendar", "اشترك في التقويم")}</a><a class="button ghost" href="${site.instagram}" ${external}>${c.tr("Follow on Instagram", "تابعنا على إنستغرام")} ${extIcon()}</a></p>
@@ -252,6 +250,7 @@ function subscribePanel(c) {
 function eventsPage(c) {
   const { upcoming, past } = eventLists(c, c.today);
   return `${pageHead(c, {
+    scene: "events",
     kicker: c.tr("Around the community", "في مجتمعنا"),
     title: c.tr("Good things happen when we gather.", "الحاجات الحلوة بتبدأ باللمة."),
     intro: c.tr("What’s coming up, how to never miss it, and moments from past gatherings.", "الفعاليات القادمة، وكيف لا تفوتك، ولحظات من لقاءات سابقة."),
@@ -276,8 +275,11 @@ function homePage(c) {
   const { upcoming, past } = eventLists(c, c.today);
   const recent = past.filter((e) => e.date).slice(0, 3);
   const star = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`;
-  return `<section class="hero">
-  <div class="wrap hero-grid">
+  return `<section class="hero"
+  data-egg-jebena="${esc(c.tr("The jebena’s always on. Come for coffee, leave with friends.", "الجبنة دايماً شغالة. تعال اشرب جبنة وارجع بأصحاب."))}"
+  data-egg-sun="${esc(c.tr("We brought the Khartoum sun with us. Edmonton winter doesn’t scare us.", "جبنا شمس الخرطوم معانا… شتاء إدمنتون ما بيخوفنا."))}"
+  data-egg-felucca="${esc(c.tr("All aboard! Next stop: Al-Mogran, where the Blue and White Nile meet.", "اركب المركب! المحطة الجاية المقرن، ملتقى النيلين."))}">
+  <div class="wrap hero-inner">
     <div class="hero-copy">
       <p class="eyebrow">${c.tr("University of Alberta · Edmonton", "جامعة ألبرتا · إدمونتون")}</p>
       <h1>${c.tr("Wherever we gather,<br>it’s <em>home.</em>", "وين ما اتلمّينا،<br>دا <em>البيت.</em>")}</h1>
@@ -287,15 +289,9 @@ function homePage(c) {
         <a class="button ghost" href="${c.urlFor("events")}">${c.tr("See what’s on", "شوف الفعاليات")}</a>
       </p>
     </div>
-    <figure class="hero-art"
-      data-egg-jebena="${esc(c.tr("The jebena’s always on. Come for coffee, leave with friends.", "الجبنة دايماً شغالة. تعال اشرب جبنة وارجع بأصحاب."))}"
-      data-egg-sun="${esc(c.tr("We brought the Khartoum sun with us. Edmonton winter doesn’t scare us.", "جبنا شمس الخرطوم معانا… شتاء إدمنتون ما بيخوفنا."))}"
-      data-egg-felucca="${esc(c.tr("All aboard! Next stop: Al-Mogran, where the Blue and White Nile meet.", "اركب المركب! المحطة الجاية المقرن، ملتقى النيلين."))}">
-      ${heroSvg}
-      <span class="hero-note" lang="ar" dir="rtl">أهلاً بيك</span>
-      <figcaption>${c.tr("A little piece of home, wherever we go.", "حتة من البيت، وين ما مشينا.")}</figcaption>
-    </figure>
+    <p class="hero-note" lang="ar" dir="rtl" aria-hidden="true">أهلاً بيك</p>
   </div>
+  ${heroScene()}
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
   .map(() => `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`)
@@ -314,6 +310,7 @@ function homePage(c) {
   </ol>
 </section>
 <section class="band" aria-labelledby="next-title">
+  ${waveEdge("var(--cream)", "top")}
   <div class="wrap section">
     <div class="section-row">
       ${sectionHead(c, { id: "next-title", kicker: c.tr("Next on the calendar", "القادم في التقويم"), title: c.tr("Come to a gathering.", "تعال للمة.") })}
@@ -322,6 +319,7 @@ function homePage(c) {
     <div class="event-grid" data-event-list="upcoming">${upcoming.slice(0, 3).map((e) => eventCard(c, e)).join("")}</div>
     <div data-upcoming-empty${upcoming.length ? " hidden" : ""}>
       <div class="next-note">
+        ${brewing()}
         <p><b>${c.tr("No new dates yet. The shai’s still brewing.", "لسه ما في مواعيد جديدة. الشاي لسه بيتعمل.")}</b> ${c.tr("Subscribe to the club calendar and new gatherings appear in yours automatically. Until then, here’s what we’ve been up to.", "اشترك في تقويم المنظمة وستظهر اللقاءات الجديدة في تقويمك تلقائياً. وإلى ذلك الحين، هذا ما كنا نفعله.")}</p>
         <a class="button small" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe", "اشترك")}</a>
       </div>
@@ -337,6 +335,8 @@ function homePage(c) {
   <div class="merch-grid compact">${merch.map((p) => merchCard(c, p)).join("")}</div>
 </section>
 <section class="join" aria-labelledby="join-title">
+  ${waveEdge("var(--cream)", "top")}
+  ${waveEdge("var(--cream)", "bottom")}
   <div class="wrap join-grid">
     <div>
       <p class="eyebrow">${c.tr("There’s room for you here", "في مكان ليك هنا")}</p>
@@ -373,6 +373,7 @@ function linkCards(c, list, startAt = 1) {
 
 function guidePage(c) {
   return `${pageHead(c, {
+    scene: "guide",
     kicker: c.tr("Your first few weeks", "أسابيعك الأولى"),
     title: c.tr("New here? You belong.", "جديد هنا؟ في مكان ليك."),
     intro: c.tr("You don’t need to know anyone already. Here’s how to find your feet, and your people.", "لا تحتاج لمعرفة أحد مسبقاً. هكذا تجد طريقك وناسك."),
@@ -407,6 +408,7 @@ function resourcesPage(c) {
     ["Isha", "العشاء"],
   ];
   return `${pageHead(c, {
+    scene: "resources",
     kicker: c.tr("Campus, made easier", "الجامعة أسهل"),
     title: c.tr("Student resources.", "موارد الطلاب."),
     intro: c.tr("Today’s prayer times and the university tools you’ll use every week.", "مواقيت الصلاة اليوم والأدوات الجامعية التي تستخدمها كل أسبوع."),
@@ -448,6 +450,7 @@ function merchCard(c, p) {
 
 function merchPage(c) {
   return `${pageHead(c, {
+    scene: "merch",
     kicker: c.tr("Wear a little piece of home", "خذ معك حتة من البيت"),
     title: c.tr("The SSO collection.", "مجموعة المنظمة."),
     intro: c.tr("Inspired by Sudan, made for campus life. Our first small drop is being sampled now.", "مستوحاة من السودان ومصممة لحياة الجامعة. أول إطلاق صغير في مرحلة العينات الآن."),
@@ -512,6 +515,7 @@ function productPage(c, p) {
 function teamPage(c) {
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("");
   return `${pageHead(c, {
+    scene: "team",
     kicker: c.tr("The people behind the community", "الناس وراء اللمة"),
     title: c.tr("Meet the executive team.", "تعرّف على الفريق التنفيذي."),
     intro: c.tr("The students who keep SSO running this year.", "الطلاب الذين يقودون المنظمة هذا العام."),
@@ -543,6 +547,7 @@ function contactPage(c) {
     [c.tr("Concerns", "الشكاوى"), c.tr("Something you want the executive team to hear. We treat these privately.", "شيء تريد أن يسمعه الفريق التنفيذي. نتعامل معها بخصوصية.")],
   ];
   return `${pageHead(c, {
+    scene: "contact",
     kicker: c.tr("There’s room for you here", "في مكان ليك هنا"),
     title: c.tr("Get involved.", "شارك معنا."),
     intro: c.tr("Become a member, lend a hand, or just say hello.", "انضم للمنظمة، أو شارك بجهدك، أو قول مرحب."),
@@ -584,6 +589,7 @@ function contactPage(c) {
 // ---------------------------------------------------------------------------
 export function notFoundPage(c) {
   return `${pageHead(c, {
+    scene: "lost",
     kicker: "404",
     title: c.tr("This page went out for ful and never came back.", "الصفحة دي مشت تجيب فول وما رجعت."),
     intro: c.tr("The link may be old, or the page may have moved. Let’s get you back to the lamma.", "ممكن الرابط قديم أو الصفحة اتنقلت. خلينا نرجعك للمة."),
