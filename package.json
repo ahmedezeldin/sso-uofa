@@ -1,0 +1,11 @@
+{
+  "name": "sso-uofa",
+  "private": true,
+  "description": "Sudanese Students Organization UofA community website",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/build.mjs && node scripts/serve.mjs"
+  }
+}

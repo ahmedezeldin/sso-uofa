@@ -1,21 +1,81 @@
 # SSO UofA website
 
-Public website: https://ahmedezeldin.com/sso-uofa/
+Bilingual (English / Arabic) website for the Sudanese Students Organization at the University of Alberta.
 
-GitHub Pages address: https://ahmedezeldin.github.io/sso-uofa/ (redirects to the existing account-level custom domain). Hosting uses GitHub Pages free hosting; no new domain was purchased.
+- Live site: https://ahmedezeldin.com/sso-uofa/ (Arabic: `/sso-uofa/ar/`)
+- Hosting: GitHub Pages, published by GitHub Actions on every push to `main` and once a day.
 
-A bilingual student community website with events, a shared calendar subscription, volunteer information and merchandise galleries.
+## Editing content
 
-## Updating the site
+Almost everything you'd want to change is in **[`src/content.mjs`](src/content.mjs)**:
 
-Edit files in `dist/` and push to `main`. GitHub Actions regenerates the calendar feed and publishes automatically. The event list is in `dist/app.js`; keep event IDs unchanged when editing dates. Calendar revision records are in `calendar-revisions.json`. Run `node scripts/build-calendar.mjs` locally after event edits and commit both the feed and revision file so revision numbers persist.
+| What | Where in `content.mjs` |
+| --- | --- |
+| Instagram, Rubric, volunteer WhatsApp link, newsletter link | `site` |
+| Events (upcoming and past) | `events` |
+| Executive team | `team` |
+| Merch names, prices, sizes, descriptions | `merch` |
+| Links on "New here?" and "Student resources" | `newStudentLinks`, `campusTools` |
+| Home page FAQ | `faqs` |
 
-## Preview locally
+Every piece of text is written as `L("English", "العربية")`, so both languages stay in sync.
 
-Serve the `dist` directory under the `/sso-uofa/` path so navigation matches the published site. The deployment has no dependencies or build step beyond regenerating the calendar feed.
+### Adding an event
 
-## Launch status
+Add an entry to `events`:
 
-Membership links to the club's public Rubric page. Contact delivery, newsletter subscriptions, WhatsApp registration and paid merchandise ordering are not connected. The checkout reviews a local bag only. Product gallery/model imagery is AI-generated; material specifications and final prices remain subject to physical samples and club approval. No personal form data is sent or saved by the checkout.
+```js
+{
+  id: "eid-dinner-2027",            // unique, never change it after publishing
+  date: "2027-03-20",               // YYYY-MM-DD, Edmonton time
+  category: "community",            // "culture" or "community"
+  poster: L("Eid<br>dinner", "عشاء<br>العيد"),
+  posterStyle: "nile",              // "nile", "bbq" or "film"
+  title: L("Eid dinner", "عشاء العيد"),
+  summary: L("…", "…"),
+  time: L("6–9 pm", "٦–٩ مساءً"),   // optional
+  venue: L("SUB 4th floor", "…"),   // optional
+  source: "https://www.instagram.com/p/…", // optional link to the announcement
+},
+```
 
-This repository is currently maintained under Ahmed's account. It can be transferred to a club-owned GitHub organization when the club is ready.
+Events move from "Upcoming" to "Past" on their own. The calendar feed (`/sso-events.ics`) updates for everyone subscribed.
+
+### Team photos
+
+Put portraits in `src/assets/team/` (portrait orientation, about 800×1000, JPEG), then add `photo: "team/name.jpg"` to that person in `team`.
+
+## Running it locally
+
+You need [Node.js](https://nodejs.org) 20 or newer. No packages to install.
+
+```bash
+npm start
+```
+
+That builds the site into `_site/` and serves it at http://localhost:8080/sso-uofa/.
+
+`npm run build` only builds. The build fails, with a message, if content is invalid (a bad date, duplicate event ID, missing merch image) or if any internal link is broken.
+
+When you change an event, the build also updates `calendar-revisions.json`. Commit that file along with your change so calendar apps notice the update.
+
+## How it's put together
+
+```
+src/content.mjs      all text and data
+src/templates.mjs    page layouts (HTML)
+src/assets/          CSS, the small site.js, images
+scripts/build.mjs    renders every page in both languages, calendar feeds, sitemap, redirects
+scripts/serve.mjs    local preview server
+```
+
+Pages are plain HTML generated at build time, so they load fast, work without JavaScript and can be found by search engines. `site.js` only adds the mobile menu, the copy button, live prayer times and live upcoming/past sorting.
+
+## Status
+
+- **Membership** goes to the club's Rubric page.
+- **Contact and volunteering** go through Instagram DMs until a WhatsApp invite link or newsletter link is added to `site` in `content.mjs`. The pages switch over automatically.
+- **Merch** is a preview only. Prices are estimates and the product images are AI-generated mock-ups.
+- Prayer times come from the public feed used by [MSA UofA](https://www.msauofa.ca/).
+
+This repository is maintained under Ahmed's account and can be transferred to a club-owned GitHub organization later.
