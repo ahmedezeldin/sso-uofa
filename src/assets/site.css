@@ -94,6 +94,21 @@ input {
   outline-offset: 3px;
   border-radius: 4px;
 }
+/* On maroon sections terracotta disappears (about 1.6:1), so switch to gold. */
+:is(.join, .subscribe, .ticker, .card-dark) :focus-visible {
+  outline-color: var(--gold);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 [hidden] {
   display: none !important;
 }
@@ -291,7 +306,7 @@ html[dir="rtl"] .ext {
 }
 .brand small {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.04em;
   color: var(--muted);
 }
@@ -416,13 +431,15 @@ html[dir="rtl"] .ext {
 .footer-links {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, max-content));
-  gap: 10px 48px;
+  gap: 0 48px;
   justify-content: end;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .footer-links a {
+  display: inline-block;
+  padding-block: 10px;
   text-decoration: none;
   font-weight: 500;
 }
@@ -568,7 +585,8 @@ html[dir="rtl"] .hero-note {
     gap: 8px;
     padding-bottom: calc(var(--scene-h) * 0.82);
   }
-  .hero-note {
+  .hero-note,
+  .hero-scene .drift-birds {
     display: none;
   }
 }
@@ -1931,4 +1949,85 @@ html[lang] .team-card h2 {
   *::after {
     transition: none !important;
   }
+}
+
+/* Touch screens get 44px tap targets for text links and small buttons. */
+@media (pointer: coarse) {
+  .text-link,
+  .breadcrumb a,
+  .lang-switch {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .button.small {
+    min-height: 44px;
+  }
+}
+
+/* Pause / play control for all decorative motion (WCAG 2.2.2). */
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(249 245 236 / 0.85);
+  color: var(--ink);
+  font: 500 14px/1 var(--font-sans);
+  cursor: pointer;
+}
+html[lang="ar"] .motion-toggle {
+  font-family: var(--font-arabic);
+}
+.motion-toggle:hover {
+  background: var(--cream);
+  border-color: var(--maroon);
+}
+.motion-toggle svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.motion-toggle .icon-play,
+.motion-toggle[aria-pressed="true"] .icon-pause {
+  display: none;
+}
+.motion-toggle[aria-pressed="true"] .icon-play {
+  display: inline;
+}
+.hero-controls {
+  position: absolute;
+  inset-inline-end: var(--gutter);
+  bottom: 14px;
+  z-index: 3;
+}
+.footer-bottom {
+  align-items: center;
+}
+/* No point offering a pause button when nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-toggle {
+    display: none;
+  }
+}
+html:not(.js) .motion-toggle {
+  display: none;
+}
+/* Paused by the visitor, or scrolled out of view (saves battery). */
+.motion-paused *,
+.offscreen,
+.offscreen * {
+  animation-play-state: paused !important;
+}
+/* Intro animations would freeze on their invisible first frame, so skip them instead. */
+.motion-paused .rise,
+.motion-paused .rise-sun {
+  animation: none !important;
+}
+.motion-paused .wave-edge svg,
+.motion-paused .ticker-track {
+  animation-play-state: paused !important;
 }

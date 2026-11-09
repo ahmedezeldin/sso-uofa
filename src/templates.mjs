@@ -44,8 +44,9 @@ const external = 'target="_blank" rel="noopener"';
 function arrow(c) {
   return `<span class="arrow" aria-hidden="true">${c.lang === "ar" ? "←" : "→"}</span>`;
 }
-function extIcon() {
-  return `<svg class="ext" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
+// Marks links that open in a new tab, visually and for screen readers.
+function extIcon(c) {
+  return `<svg class="ext" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span class="sr-only"> ${c ? c.tr("(opens in a new tab)", "(يفتح في نافذة جديدة)") : "(opens in a new tab)"}</span>`;
 }
 function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
   return `<div class="section-head">
@@ -151,13 +152,14 @@ ${main}
     <nav aria-label="${c.tr("Footer", "تذييل الصفحة")}">
       <ul class="footer-links">
         ${navItems.map((n) => `<li><a href="${c.urlFor(n)}">${c.t(pages[n].title)}</a></li>`).join("")}
-        <li><a href="${site.instagram}" ${external}>Instagram ${extIcon()}</a></li>
-        <li><a href="${site.membership}" ${external}>Rubric ${extIcon()}</a></li>
+        <li><a href="${site.instagram}" ${external}>Instagram ${extIcon(c)}</a></li>
+        <li><a href="${site.membership}" ${external}>Rubric ${extIcon(c)}</a></li>
       </ul>
     </nav>
   </div>
   <div class="wrap footer-bottom">
     <p>${c.tr("We acknowledge that Edmonton is on Treaty 6 territory and the Métis homeland.", "نقر بأن إدمونتون تقع على أراضي المعاهدة السادسة وموطن شعب الميتي.")}</p>
+    <button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false" data-label-pause="${c.tr("Pause animations", "إيقاف الحركة")}" data-label-play="${c.tr("Play animations", "تشغيل الحركة")}"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="icon-pause" d="M4 3h3v10H4zM9 3h3v10H9z"/><path class="icon-play" d="M4 2.5v11l9-5.5z"/></svg><span>${c.tr("Pause animations", "إيقاف الحركة")}</span></button>
     <p><span class="friday" hidden>${c.tr("Jumu‘ah Mubarak", "جمعة مباركة")} · </span>© ${c.year} SSO UofA · ${c.tr("From Sudan, with love.", "من السودان، بكل حب.")}</p>
   </div>
 </footer>
@@ -201,7 +203,7 @@ function eventCard(c, e, { headingLevel = 3 } = {}) {
     <p>${c.t(e.summary)}</p>
     ${details.length ? `<dl class="event-details">${details.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>` : ""}
     <p class="event-actions">
-      ${e.source ? `<a class="text-link" href="${e.source}" ${external}>${c.tr("View on Instagram", "عرض على إنستغرام")} ${extIcon()}</a>` : ""}
+      ${e.source ? `<a class="text-link" href="${e.source}" ${external}>${c.tr("View on Instagram", "عرض على إنستغرام")} ${extIcon(c)}</a>` : ""}
       ${e.date ? `<a class="text-link only-upcoming" href="${c.base}assets/events/${e.id}.ics" download>${c.tr("Add to calendar", "أضف إلى التقويم")}</a>` : ""}
     </p>
   </div>
@@ -222,7 +224,7 @@ function upcomingEmpty(c) {
   ${brewing()}
   <h3>${c.tr("No dates yet. The shai’s still brewing.", "لسه ما في مواعيد. الشاي لسه بيتعمل.")}</h3>
   <p>${c.tr("New gatherings are posted on Instagram first. Subscribe to the club calendar and they’ll appear in yours automatically.", "تُنشر اللقاءات الجديدة على إنستغرام أولاً. اشترك في تقويم المنظمة وستظهر في تقويمك تلقائياً.")}</p>
-  <p class="actions"><a class="button" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe to the calendar", "اشترك في التقويم")}</a><a class="button ghost" href="${site.instagram}" ${external}>${c.tr("Follow on Instagram", "تابعنا على إنستغرام")} ${extIcon()}</a></p>
+  <p class="actions"><a class="button" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe to the calendar", "اشترك في التقويم")}</a><a class="button ghost" href="${site.instagram}" ${external}>${c.tr("Follow on Instagram", "تابعنا على إنستغرام")} ${extIcon(c)}</a></p>
 </div>`;
 }
 
@@ -292,6 +294,7 @@ function homePage(c) {
     <p class="hero-note" lang="ar" dir="rtl" aria-hidden="true">أهلاً بيك</p>
   </div>
   ${heroScene()}
+  <div class="hero-controls"><button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false" data-label-pause="${c.tr("Pause animations", "إيقاف الحركة")}" data-label-play="${c.tr("Play animations", "تشغيل الحركة")}"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="icon-pause" d="M4 3h3v10H4zM9 3h3v10H9z"/><path class="icon-play" d="M4 2.5v11l9-5.5z"/></svg><span>${c.tr("Pause animations", "إيقاف الحركة")}</span></button></div>
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
   .map(() => `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`)
@@ -364,7 +367,7 @@ function linkCards(c, list, startAt = 1) {
     .map(
       (r, i) => `<li><a class="link-card" href="${r.url}" ${external}>
   <span class="num">${String(i + startAt).padStart(2, "0")}</span>
-  <b>${c.t(r.title)} ${extIcon()}</b>
+  <b>${c.t(r.title)} ${extIcon(c)}</b>
   <span>${c.t(r.desc)}</span>
 </a></li>`,
     )
@@ -381,7 +384,7 @@ function guidePage(c) {
 <section class="wrap section" aria-labelledby="steps-title">
   <h2 id="steps-title" class="list-title">${c.tr("Three easy first steps", "ثلاث خطوات أولى سهلة")}</h2>
   <ol class="steps">
-    <li><b>${c.tr("Become a member", "انضم للمنظمة")}</b><p>${c.tr("Free, and takes a minute on Rubric.", "مجاناً وخلال دقيقة على روبرك.")}</p><a class="text-link" href="${site.membership}" ${external}>${c.tr("Join on Rubric", "انضم عبر روبرك")} ${extIcon()}</a></li>
+    <li><b>${c.tr("Become a member", "انضم للمنظمة")}</b><p>${c.tr("Free, and takes a minute on Rubric.", "مجاناً وخلال دقيقة على روبرك.")}</p><a class="text-link" href="${site.membership}" ${external}>${c.tr("Join on Rubric", "انضم عبر روبرك")} ${extIcon(c)}</a></li>
     <li><b>${c.tr("Subscribe to the calendar", "اشترك في التقويم")}</b><p>${c.tr("Every gathering lands in your calendar automatically.", "كل لقاء يصل إلى تقويمك تلقائياً.")}</p><a class="text-link" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe", "اشترك")} ${arrow(c)}</a></li>
     <li><b>${c.tr("Come and say hi", "تعال وسلّم")}</b><p>${c.tr("Bring a friend, or come alone and leave with a few.", "تعال مع صديق، أو تعال لوحدك وارجع بأصدقاء.")}</p><a class="text-link" href="${c.urlFor("events")}">${c.tr("See events", "شوف الفعاليات")} ${arrow(c)}</a></li>
   </ol>
@@ -419,7 +422,7 @@ function resourcesPage(c) {
   data-msg-next="${c.tr("Next", "التالية")}">
   <div class="section-row">
     <div class="section-head"><p class="eyebrow">${c.tr("A moment for prayer", "وقت للصلاة")}</p><h2 id="prayer-title">${c.tr("Prayer times · Edmonton", "مواقيت الصلاة · إدمونتون")}</h2></div>
-    <a class="text-link" href="https://www.msauofa.ca/" ${external}>${c.tr("Source: MSA UofA", "المصدر: جمعية الطلاب المسلمين")} ${extIcon()}</a>
+    <a class="text-link" href="https://www.msauofa.ca/" ${external}>${c.tr("Source: MSA UofA", "المصدر: جمعية الطلاب المسلمين")} ${extIcon(c)}</a>
   </div>
   <ul class="prayer-grid">${prayers.map(([k, ar]) => `<li data-prayer-key="${k}"><span>${c.tr(k, ar)}</span><b>–</b></li>`).join("")}</ul>
   <p class="fine-print" data-prayer-status role="status">${c.tr("Prayer times need JavaScript. You can find them on the MSA UofA website.", "تحتاج مواقيت الصلاة إلى JavaScript. يمكنك إيجادها على موقع جمعية الطلاب المسلمين.")}</p>
@@ -457,6 +460,7 @@ function merchPage(c) {
   })}
 <section class="wrap section">
   <div class="notice"><b>${c.tr("Pre-orders aren’t open yet.", "الطلب المسبق لم يُفتح بعد.")}</b> ${c.tr("Prices are estimates in CAD. Final prices, sizing and campus pickup will be announced on Instagram before orders open.", "الأسعار تقديرية بالدولار الكندي. تُعلن الأسعار النهائية والمقاسات والاستلام في الجامعة على إنستغرام قبل فتح الطلبات.")} <a href="${site.instagram}" ${external}>${site.instagramHandle}</a></div>
+  <h2 class="sr-only">${c.tr("The collection", "المجموعة")}</h2>
   <div class="merch-grid">${merch.map((p) => merchCard(c, p)).join("")}</div>
   <p class="fine-print">${c.tr("Product imagery is AI-generated to show the intended designs. Physical samples may differ.", "صور المنتجات مولدة بالذكاء الاصطناعي لعرض التصاميم المقترحة. قد تختلف العينات الفعلية.")}</p>
 </section>`;
@@ -494,7 +498,7 @@ function productPage(c, p) {
       <div><dt>${c.tr("Sizes", "المقاسات")}</dt><dd>${p.sizes.map((s) => (s === "One size" ? c.tr("One size", "مقاس واحد") : s)).join(" · ")}</dd></div>
     </dl>
     <div class="notice"><b>${c.tr("Pre-orders open soon.", "الطلب المسبق قريباً.")}</b> ${c.tr("Follow us so you don’t miss the drop. Pickup will be on campus.", "تابعنا حتى لا يفوتك الإطلاق. الاستلام سيكون في الجامعة.")}</div>
-    <p class="actions"><a class="button" href="${site.instagram}" ${external}>${c.tr("Get notified on Instagram", "تابع الإطلاق على إنستغرام")} ${extIcon()}</a></p>
+    <p class="actions"><a class="button" href="${site.instagram}" ${external}>${c.tr("Get notified on Instagram", "تابع الإطلاق على إنستغرام")} ${extIcon(c)}</a></p>
     <div class="product-specs">
       <details open><summary>${c.tr("The design story", "حكاية التصميم")}</summary><p>${c.t(p.story)}</p></details>
       <details><summary>${c.tr("Materials", "الخامات")}</summary><p>${c.t(p.materials)}</p></details>
@@ -532,7 +536,7 @@ function teamPage(c) {
       )
       .join("")}
   </ul>
-  <p class="fine-print">${c.tr("Names and roles from the club’s Rubric directory, checked 9 October 2026.", "الأسماء والمناصب من دليل المنظمة على روبرك، تم التحقق منها في ٩ أكتوبر ٢٠٢٦.")} <a href="${site.membership}" ${external}>${c.tr("View the directory", "عرض الدليل")} ${extIcon()}</a></p>
+  <p class="fine-print">${c.tr("Names and roles from the club’s Rubric directory, checked 9 October 2026.", "الأسماء والمناصب من دليل المنظمة على روبرك، تم التحقق منها في ٩ أكتوبر ٢٠٢٦.")} <a href="${site.membership}" ${external}>${c.tr("View the directory", "عرض الدليل")} ${extIcon(c)}</a></p>
 </section>`;
 }
 
@@ -557,7 +561,7 @@ function contactPage(c) {
     <p class="eyebrow">01</p>
     <h2 id="member-title">${c.tr("Become a member", "انضم للمنظمة")}</h2>
     <p>${c.tr("Membership is free and open to everyone. Sign up on Rubric with your UAlberta account to hear about every gathering.", "العضوية مجانية ومفتوحة للجميع. سجّل في روبرك بحسابك الجامعي لتعرف عن كل لقاء.")}</p>
-    <p class="actions"><a class="button" href="${site.membership}" ${external}>${c.tr("Join on Rubric", "انضم عبر روبرك")} ${extIcon()}</a></p>
+    <p class="actions"><a class="button" href="${site.membership}" ${external}>${c.tr("Join on Rubric", "انضم عبر روبرك")} ${extIcon(c)}</a></p>
   </section>
   <section class="card" id="volunteer" aria-labelledby="volunteer-title">
     <p class="eyebrow">02</p>
@@ -565,8 +569,8 @@ function contactPage(c) {
     <p>${c.tr("Volunteers coordinate in one WhatsApp group. Shifts are posted there, and you pick only the ones that suit you.", "يتنسق المتطوعون في مجموعة واتساب واحدة. تُنشر المهام هناك وتختار ما يناسبك فقط.")}</p>
     ${
       site.volunteerWhatsApp
-        ? `<p class="actions"><a class="button" href="${site.volunteerWhatsApp}" ${external}>${c.tr("Join the volunteer group", "انضم لمجموعة المتطوعين")} ${extIcon()}</a></p><p class="fine-print">${c.tr("Your phone number will be visible to other group members.", "سيكون رقم هاتفك ظاهراً لأعضاء المجموعة.")}</p>`
-        : `<p class="actions"><a class="button" href="${site.instagramDM}" ${external}>${c.tr("Message us to volunteer", "راسلنا للتطوع")} ${extIcon()}</a></p><p class="fine-print">${c.tr("The group link is shared directly while volunteer sign-up is being set up.", "يُرسل رابط المجموعة مباشرة إلى أن يُجهَّز التسجيل للتطوع.")}</p>`
+        ? `<p class="actions"><a class="button" href="${site.volunteerWhatsApp}" ${external}>${c.tr("Join the volunteer group", "انضم لمجموعة المتطوعين")} ${extIcon(c)}</a></p><p class="fine-print">${c.tr("Your phone number will be visible to other group members.", "سيكون رقم هاتفك ظاهراً لأعضاء المجموعة.")}</p>`
+        : `<p class="actions"><a class="button" href="${site.instagramDM}" ${external}>${c.tr("Message us to volunteer", "راسلنا للتطوع")} ${extIcon(c)}</a></p><p class="fine-print">${c.tr("The group link is shared directly while volunteer sign-up is being set up.", "يُرسل رابط المجموعة مباشرة إلى أن يُجهَّز التسجيل للتطوع.")}</p>`
     }
   </section>
   <section class="card wide" id="message" aria-labelledby="message-title">
@@ -574,11 +578,11 @@ function contactPage(c) {
     <h2 id="message-title">${c.tr("Send us a message", "راسلنا")}</h2>
     <p>${c.tr("The fastest way to reach the team is a direct message on Instagram. We usually reply within a few days.", "أسرع طريقة للوصول إلى الفريق هي رسالة مباشرة على إنستغرام. نرد عادة خلال أيام.")}</p>
     <ul class="topic-list">${topics.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("")}</ul>
-    <p class="actions"><a class="button" href="${site.instagramDM}" ${external}>${c.tr("Message", "راسل")} ${site.instagramHandle} ${extIcon()}</a></p>
+    <p class="actions"><a class="button" href="${site.instagramDM}" ${external}>${c.tr("Message", "راسل")} ${site.instagramHandle} ${extIcon(c)}</a></p>
   </section>
   ${
     site.newsletter
-      ? `<section class="card wide" aria-labelledby="news-title"><p class="eyebrow">04</p><h2 id="news-title">${c.tr("Get the newsletter", "اشترك في النشرة")}</h2><p>${c.tr("Upcoming gatherings and community news, now and then.", "اللقاءات القادمة وأخبار المجتمع بين حين وآخر.")}</p><p class="actions"><a class="button" href="${site.newsletter}" ${external}>${c.tr("Subscribe", "اشترك")} ${extIcon()}</a></p></section>`
+      ? `<section class="card wide" aria-labelledby="news-title"><p class="eyebrow">04</p><h2 id="news-title">${c.tr("Get the newsletter", "اشترك في النشرة")}</h2><p>${c.tr("Upcoming gatherings and community news, now and then.", "اللقاءات القادمة وأخبار المجتمع بين حين وآخر.")}</p><p class="actions"><a class="button" href="${site.newsletter}" ${external}>${c.tr("Subscribe", "اشترك")} ${extIcon(c)}</a></p></section>`
       : ""
   }
 </div>`;

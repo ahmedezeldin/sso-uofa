@@ -175,7 +175,7 @@
   }
 
   const flagConfetti = () => {
-    if (reduceMotion) return;
+    if (reduceMotion || document.documentElement.classList.contains("motion-paused")) return;
     const colours = ["#d21034", "#ffffff", "#000000", "#007229"];
     const layer = document.createElement("div");
     layer.className = "confetti";
@@ -218,6 +218,36 @@
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/Edmonton", weekday: "long" }).format(new Date());
   if (weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
 
+  // Pause / play every decorative animation; the choice is remembered (WCAG 2.2.2).
+  const motionButtons = $$("[data-motion-toggle]");
+  let motionPaused = false;
+  try {
+    motionPaused = localStorage.getItem("sso-motion") === "paused";
+  } catch {}
+  const applyMotion = () => {
+    document.documentElement.classList.toggle("motion-paused", motionPaused);
+    motionButtons.forEach((b) => {
+      b.setAttribute("aria-pressed", String(motionPaused));
+      $("span", b).textContent = motionPaused ? b.dataset.labelPlay : b.dataset.labelPause;
+    });
+  };
+  motionButtons.forEach((b) =>
+    b.addEventListener("click", () => {
+      motionPaused = !motionPaused;
+      try {
+        localStorage.setItem("sso-motion", motionPaused ? "paused" : "playing");
+      } catch {}
+      applyMotion();
+    }),
+  );
+  applyMotion();
+
+  // Scenes scrolled out of view stop animating, which saves battery.
+  if ("IntersectionObserver" in window) {
+    const watch = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle("offscreen", !e.isIntersecting)));
+    $$(".hero-scene, .vignette, .skyline, .wave-edge, .ticker").forEach((el) => watch.observe(el));
+  }
+
   // Living illustration ------------------------------------------------------
   // On narrow screens, anchor the hero landscape on the pyramids side so they stay in view.
   const scene = $(".hero-scene");
@@ -233,7 +263,7 @@
   if (layers.length && !reduceMotion) {
     let queued = false;
     const move = () => {
-      const y = Math.min(scrollY, 1000);
+      const y = motionPaused ? 0 : Math.min(scrollY, 1000);
       layers.forEach((l) => (l.style.transform = `translateY(${(y * Number(l.dataset.depth)).toFixed(1)}px)`));
       queued = false;
     };
