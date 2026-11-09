@@ -14,7 +14,6 @@ Almost everything you'd want to change is in **[`src/content.mjs`](src/content.m
 | Instagram, Rubric, volunteer WhatsApp link, newsletter link | `site` |
 | Events (upcoming and past) | `events` |
 | Executive team | `team` |
-| Merch names, prices, sizes, descriptions | `merch` |
 | Links on "New here?" and "Student resources" | `newStudentLinks`, `campusTools` |
 | Home page FAQ | `faqs` |
 
@@ -61,7 +60,7 @@ npm start
 
 That builds the site into `_site/` and serves it at http://localhost:8080/sso-uofa/.
 
-`npm run build` only builds. The build fails, with a message, if content is invalid (a bad date, duplicate event ID, missing merch image) or if any internal link is broken.
+`npm run build` only builds. The build fails, with a message, if content is invalid (a bad date or duplicate event ID) or if any internal link is broken.
 
 When you change an event, the build also updates `calendar-revisions.json`. Commit that file along with your change so calendar apps notice the update.
 
@@ -82,7 +81,7 @@ Pages are plain HTML generated at build time, so they load fast, work without Ja
 
 - **Membership** goes to the club's Rubric page.
 - **Contact and volunteering** go through Instagram DMs until a WhatsApp invite link or newsletter link is added to `site` in `content.mjs`. The pages switch over automatically.
-- **Merch** is a preview only. Prices are estimates and the product images are AI-generated mock-ups.
+- **Merch** was a preview and has been removed. Its pages, product images and code are in the git history (the "Remove merch" commit) if the club launches a collection later.
 - Prayer times come from the public feed used by [MSA UofA](https://www.msauofa.ca/).
 
 This repository is maintained under Ahmed's account and can be transferred to a club-owned GitHub organization later.

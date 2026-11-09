@@ -5,7 +5,6 @@ import {
   events,
   eventCategories,
   team,
-  merch,
   newStudentLinks,
   campusTools,
   faqs,
@@ -23,18 +22,14 @@ export const pages = {
   events: { path: "events.html", title: L2("Events", "الفعاليات"), description: L2("Upcoming SSO gatherings, past highlights and a calendar you can subscribe to.", "لقاءات المنظمة القادمة واللقطات السابقة وتقويم يمكنك الاشتراك فيه.") },
   guide: { path: "guide.html", title: L2("New here?", "جديد هنا؟"), description: L2("A few starting points for your first weeks at the University of Alberta.", "نقاط بداية لأسابيعك الأولى في جامعة ألبرتا.") },
   resources: { path: "resources.html", title: L2("Student resources", "موارد الطلاب"), description: L2("Campus prayer times and the university tools you use every week.", "مواقيت الصلاة في الجامعة والأدوات الجامعية التي تستخدمها كل أسبوع.") },
-  merch: { path: "merch.html", title: L2("Merch", "المنتجات"), description: L2("The first SSO UofA collection, inspired by Sudan and made for campus life.", "أول مجموعة لمنظمة الطلاب السودانيين، مستوحاة من السودان ومصممة لحياة الجامعة.") },
   team: { path: "team.html", title: L2("Our team", "فريقنا"), description: L2("Meet the SSO UofA executive team.", "تعرّف على الفريق التنفيذي للمنظمة.") },
   contact: { path: "contact.html", title: L2("Get involved", "شارك معنا"), description: L2("Join SSO, volunteer, suggest a collaboration or send the team a message.", "انضم للمنظمة أو تطوّع أو اقترح تعاوناً أو راسل الفريق.") },
 };
-for (const p of merch) {
-  pages["product-" + p.id] = { path: `merch/${p.id}.html`, title: p.name, description: p.summary, product: p };
-}
 function L2(en, ar) {
   return { en, ar };
 }
 
-const navItems = ["events", "guide", "resources", "merch", "team", "contact"];
+const navItems = ["events", "guide", "resources", "team", "contact"];
 
 // ---------------------------------------------------------------------------
 // Shared pieces
@@ -62,9 +57,6 @@ function pageHead(c, { kicker, title, intro, scene }) {
 
 export function formatDate(c, iso, opts = { year: "numeric", month: "long", day: "numeric" }) {
   return new Intl.DateTimeFormat(c.locale, { timeZone: "UTC", ...opts }).format(new Date(iso + "T12:00:00Z"));
-}
-function price(c, n) {
-  return new Intl.NumberFormat(c.locale, { style: "currency", currency: "CAD", currencyDisplay: "code", maximumFractionDigits: 0 }).format(n);
 }
 
 // ---------------------------------------------------------------------------
@@ -94,7 +86,7 @@ export function layout(c, key, main) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(c.t(page.description))}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${site.url}/assets/${page.product ? `merch/${page.product.id}-studio.jpg` : "og-image.jpg"}">
+<meta property="og:image" content="${site.url}/assets/og-image.jpg">
 <meta property="og:locale" content="${c.lang === "ar" ? "ar_SD" : "en_CA"}">
 <link rel="icon" href="${c.asset("club-logo.jpg")}" type="image/jpeg">
 <link rel="apple-touch-icon" href="${c.asset("club-logo.jpg")}">
@@ -113,7 +105,7 @@ export function layout(c, key, main) {
     sudan: c.tr("السودان في القلب · Sudan, always in our hearts.", "السودان في القلب."),
   }).replace(/</g, "\\u003c")}</script>
 </head>
-<body data-page="${key.startsWith("product-") ? "product" : key}">
+<body data-page="${key}">
 <a class="skip" href="#main">${c.tr("Skip to content", "انتقل إلى المحتوى")}</a>
 <header class="site-header">
   <div class="wrap nav">
@@ -125,7 +117,7 @@ export function layout(c, key, main) {
     <nav id="site-nav" class="site-nav" aria-label="${c.tr("Main", "الرئيسية")}">
       <ul>${navItems
         .map((n) => {
-          const current = key === n || (n === "merch" && key.startsWith("product-"));
+          const current = key === n;
           return `<li><a href="${c.urlFor(n)}"${current ? ' aria-current="page"' : ""}>${c.t(pages[n].title)}</a></li>`;
         })
         .join("")}</ul>
@@ -330,15 +322,8 @@ function homePage(c) {
     </div>
   </div>
 </section>
-<section class="wrap section" aria-labelledby="merch-teaser-title">
-  <div class="section-row">
-    ${sectionHead(c, { id: "merch-teaser-title", kicker: c.tr("Coming soon", "قريباً"), title: c.tr("Wear a little piece of home.", "خذ معك حتة من البيت.") })}
-    <a class="text-link" href="${c.urlFor("merch")}">${c.tr("See the collection", "شوف المجموعة")} ${arrow(c)}</a>
-  </div>
-  <div class="merch-grid compact">${merch.map((p) => merchCard(c, p)).join("")}</div>
-</section>
 <section class="join" aria-labelledby="join-title">
-  ${waveEdge("var(--cream)", "top")}
+  ${waveEdge("var(--sand)", "top")}
   ${waveEdge("var(--cream)", "bottom")}
   <div class="wrap join-grid">
     <div>
@@ -436,84 +421,6 @@ function resourcesPage(c) {
 }
 
 // ---------------------------------------------------------------------------
-// Merch
-// ---------------------------------------------------------------------------
-function merchCard(c, p) {
-  return `<article class="merch-card">
-  <a href="${c.urlFor("product-" + p.id)}">
-    <div class="merch-media">
-      <img src="${c.asset(`merch/${p.id}-card.jpg`)}" alt="" width="480" height="480" loading="lazy">
-      <img class="merch-alt" src="${c.asset(`merch/${p.id}-1.jpg`)}" alt="" width="627" height="627" loading="lazy">
-    </div>
-    <div class="merch-body"><h3>${c.t(p.name)}</h3><span class="price">${price(c, p.price)}</span></div>
-    <p>${c.t(p.summary)}</p>
-  </a>
-</article>`;
-}
-
-function merchPage(c) {
-  return `${pageHead(c, {
-    scene: "merch",
-    kicker: c.tr("Wear a little piece of home", "خذ معك حتة من البيت"),
-    title: c.tr("The SSO collection.", "مجموعة المنظمة."),
-    intro: c.tr("Inspired by Sudan, made for campus life. Our first small drop is being sampled now.", "مستوحاة من السودان ومصممة لحياة الجامعة. أول إطلاق صغير في مرحلة العينات الآن."),
-  })}
-<section class="wrap section">
-  <div class="notice"><b>${c.tr("Pre-orders aren’t open yet.", "الطلب المسبق لم يُفتح بعد.")}</b> ${c.tr("Prices are estimates in CAD. Final prices, sizing and campus pickup will be announced on Instagram before orders open.", "الأسعار تقديرية بالدولار الكندي. تُعلن الأسعار النهائية والمقاسات والاستلام في الجامعة على إنستغرام قبل فتح الطلبات.")} <a href="${site.instagram}" ${external}>${site.instagramHandle}</a></div>
-  <h2 class="sr-only">${c.tr("The collection", "المجموعة")}</h2>
-  <div class="merch-grid">${merch.map((p) => merchCard(c, p)).join("")}</div>
-  <p class="fine-print">${c.tr("Product imagery is AI-generated to show the intended designs. Physical samples may differ.", "صور المنتجات مولدة بالذكاء الاصطناعي لعرض التصاميم المقترحة. قد تختلف العينات الفعلية.")}</p>
-</section>`;
-}
-
-function productPage(c, p) {
-  const shots = [
-    { src: `merch/${p.id}-studio.jpg`, w: 1000, label: c.tr("Studio", "استوديو") },
-    ...p.views.map((v, i) => ({ src: `merch/${p.id}-${i + 1}.jpg`, w: 627, label: c.t(v) })),
-  ];
-  const others = merch.filter((x) => x.id !== p.id);
-  return `<div class="wrap">
-  <nav class="breadcrumb" aria-label="${c.tr("Breadcrumb", "مسار التنقل")}"><a href="${c.urlFor("merch")}">${c.tr("The collection", "المجموعة")}</a><span aria-hidden="true">/</span><span aria-current="page">${c.t(p.name)}</span></nav>
-</div>
-<section class="wrap product">
-  <div class="gallery">
-    <div class="gallery-track" tabindex="0" aria-label="${c.tr("Product images", "صور المنتج")}">
-      ${shots
-        .map(
-          (s, i) => `<figure id="view-${i + 1}"><img src="${c.asset(s.src)}" alt="${esc(c.t(p.name) + " · " + s.label)}" width="${s.w}" height="${s.w}"${i ? ' loading="lazy"' : ' fetchpriority="high"'}><figcaption>${s.label}</figcaption></figure>`,
-        )
-        .join("")}
-    </div>
-    <ul class="gallery-thumbs">
-      ${shots.map((s, i) => `<li><a href="#view-${i + 1}"${i === 0 ? ' aria-current="true"' : ""}><img src="${c.asset(s.src.replace("-studio", "-card"))}" alt="${esc(s.label)}" width="80" height="80" loading="lazy"></a></li>`).join("")}
-    </ul>
-  </div>
-  <div class="product-info">
-    <p class="eyebrow">${c.tr("Heritage collection · Coming soon", "مجموعة التراث · قريباً")}</p>
-    <h1>${c.t(p.name)}</h1>
-    <p class="product-price"><span class="price">${price(c, p.price)}</span> <small>${c.tr("estimated", "تقديري")}</small></p>
-    <p class="lead">${c.t(p.summary)}</p>
-    <dl class="product-facts">
-      <div><dt>${c.tr("Colour", "اللون")}</dt><dd><i class="swatch" style="background:${p.swatch}"></i>${c.t(p.colour)}</dd></div>
-      <div><dt>${c.tr("Sizes", "المقاسات")}</dt><dd>${p.sizes.map((s) => (s === "One size" ? c.tr("One size", "مقاس واحد") : s)).join(" · ")}</dd></div>
-    </dl>
-    <div class="notice"><b>${c.tr("Pre-orders open soon.", "الطلب المسبق قريباً.")}</b> ${c.tr("Follow us so you don’t miss the drop. Pickup will be on campus.", "تابعنا حتى لا يفوتك الإطلاق. الاستلام سيكون في الجامعة.")}</div>
-    <p class="actions"><a class="button" href="${site.instagram}" ${external}>${c.tr("Get notified on Instagram", "تابع الإطلاق على إنستغرام")} ${extIcon(c)}</a></p>
-    <div class="product-specs">
-      <details open><summary>${c.tr("The design story", "حكاية التصميم")}</summary><p>${c.t(p.story)}</p></details>
-      <details><summary>${c.tr("Materials", "الخامات")}</summary><p>${c.t(p.materials)}</p></details>
-      <details><summary>${c.tr("Fit & care", "المقاس والعناية")}</summary><p>${c.tr("A size guide and care instructions will be published with the pre-order. The photos show the intended look, not a measured fit.", "يُنشر دليل المقاسات والعناية مع الطلب المسبق. الصور توضح المظهر المقترح وليست قياساً للمقاس.")}</p></details>
-    </div>
-    <p class="fine-print">${c.tr("AI-generated imagery. Physical samples may differ.", "صور مولدة بالذكاء الاصطناعي. قد تختلف العينات الفعلية.")}</p>
-  </div>
-</section>
-<section class="wrap section" aria-labelledby="more-title">
-  <h2 id="more-title" class="list-title">${c.tr("More from the collection", "المزيد من المجموعة")}</h2>
-  <div class="merch-grid compact two">${others.map((x) => merchCard(c, x)).join("")}</div>
-</section>`;
-}
-
-// ---------------------------------------------------------------------------
 // Team
 // ---------------------------------------------------------------------------
 function teamPage(c) {
@@ -603,6 +510,5 @@ export function notFoundPage(c) {
 
 export function renderPage(c, key) {
   const page = pages[key];
-  if (page.product) return productPage(c, page.product);
-  return { home: homePage, events: eventsPage, guide: guidePage, resources: resourcesPage, merch: merchPage, team: teamPage, contact: contactPage }[key](c);
+  return { home: homePage, events: eventsPage, guide: guidePage, resources: resourcesPage, team: teamPage, contact: contactPage }[key](c);
 }

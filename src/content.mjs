@@ -97,76 +97,6 @@ export const team = [
 ];
 
 // ---------------------------------------------------------------------------
-// Merch (concept collection; not yet on sale)
-// Images live in src/assets/merch/: <id>-studio.jpg, <id>-card.jpg and <id>-1..4.jpg
-// ---------------------------------------------------------------------------
-export const merch = [
-  {
-    id: "tee",
-    name: L("The Heritage Tee", "تيشيرت التراث"),
-    price: 30,
-    colour: L("Ivory", "عاجي"),
-    swatch: "#e9dfcb",
-    sizes: ["XS", "S", "M", "L", "XL", "2XL"],
-    summary: L(
-      "An ivory tee with a restrained burgundy chest print: Sudan, the Meroë pyramids and SSO UofA.",
-      "تيشيرت عاجي بطباعة عنابية بسيطة على الصدر تجمع السودان وأهرامات مروي واسم المنظمة.",
-    ),
-    story: L(
-      "Inspired by Meroë’s pyramid silhouettes and the thread that runs between home and campus.",
-      "مستوحى من أهرامات مروي والخيط الذي يربط البيت بالجامعة.",
-    ),
-    materials: L(
-      "Crew neck, short sleeves, fine-knit feel. Fibre composition, weight and print method will be confirmed after sampling.",
-      "ياقة دائرية وأكمام قصيرة وملمس ناعم. تُحدد تركيبة الألياف والوزن وطريقة الطباعة بعد اعتماد العينة.",
-    ),
-    views: [L("On model · front", "على العارض · الأمام"), L("On model · back", "على العارض · الخلف"), L("Print detail", "تفاصيل الطباعة"), L("On campus", "في الجامعة")],
-  },
-  {
-    id: "hoodie",
-    name: L("The Meroë Hoodie", "هودي مروي"),
-    price: 65,
-    colour: L("Deep burgundy", "عنابي داكن"),
-    swatch: "#612c32",
-    sizes: ["XS", "S", "M", "L", "XL", "2XL"],
-    summary: L(
-      "A deep burgundy hoodie with a cream heritage graphic on the back. From home to campus.",
-      "هودي عنابي برسمة تراثية كريمية على الظهر. من البيت إلى الجامعة.",
-    ),
-    story: L(
-      "Meroë’s pyramids beside the Nile, framed with the words that sum up the club: from home to campus.",
-      "أهرامات مروي بجانب النيل، مع العبارة التي تلخص المنظمة: من البيت إلى الجامعة.",
-    ),
-    materials: L(
-      "Brushed-knit body, ribbed cuffs and hem, lined hood. Fibre composition, weight and print method will be confirmed after sampling.",
-      "نسيج ناعم وأساور مضلعة وقبعة مبطنة. تُحدد تركيبة الألياف والوزن وطريقة الطباعة بعد اعتماد العينة.",
-    ),
-    views: [L("On model · front", "على العارض · الأمام"), L("On model · back", "على العارض · الخلف"), L("Print detail", "تفاصيل الطباعة"), L("On campus", "في الجامعة")],
-  },
-  {
-    id: "tote",
-    name: L("The Ahlan Tote", "حقيبة أهلاً"),
-    price: 20,
-    colour: L("Natural canvas", "قماش طبيعي"),
-    swatch: "#e5d7be",
-    sizes: ["One size"],
-    summary: L(
-      "Natural canvas, expressive “أهلاً بيك” lettering and a flowing Nile-inspired detail.",
-      "قماش طبيعي وعبارة «أهلاً بيك» ولمسة مستوحاة من النيل.",
-    ),
-    story: L(
-      "A warm Sudanese welcome and a line drawing of the Nile: a small reminder of home for every day on campus.",
-      "ترحيب سوداني دافئ ورسم للنيل: تذكير صغير بالبيت في كل يوم جامعي.",
-    ),
-    materials: L(
-      "Canvas body with shoulder-length handles. Fabric weight, dimensions and capacity will be confirmed after sampling.",
-      "قماش كانفاس بمقابض للكتف. يُحدد وزن القماش والأبعاد والسعة بعد اعتماد العينة.",
-    ),
-    views: [L("Carried · front", "محمولة · الأمام"), L("Carried · side", "محمولة · الجانب"), L("Print detail", "تفاصيل الطباعة"), L("On campus", "في الجامعة")],
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Links for new students and everyday campus tools (reviewed 9 October 2026)
 // ---------------------------------------------------------------------------
 export const newStudentLinks = [
@@ -247,8 +177,8 @@ export const faqs = [
   {
     q: L("Is membership free?", "هل العضوية مجانية؟"),
     a: L(
-      "Yes. Membership is free. If an event or merch item costs anything, the price is listed before you sign up or order.",
-      "نعم، العضوية مجانية. إذا كانت لفعالية أو منتج تكلفة، تُعلن قبل التسجيل أو الطلب.",
+      "Yes. Membership is free. If an event costs anything, the price is listed before you sign up.",
+      "نعم، العضوية مجانية. إذا كانت لفعالية تكلفة، تُعلن قبل التسجيل.",
     ),
   },
   {
@@ -270,13 +200,6 @@ export const faqs = [
     a: L(
       "Subscribe to the club calendar on the Events page once, and new events appear in your calendar app automatically. Announcements also go out on Instagram @sso.uofa.",
       "اشترك مرة واحدة في تقويم المنظمة من صفحة الفعاليات، وستظهر الفعاليات الجديدة في تطبيق التقويم تلقائياً. تُنشر الإعلانات أيضاً على إنستغرام @sso.uofa.",
-    ),
-  },
-  {
-    q: L("Can I buy merch yet?", "هل يمكنني شراء المنتجات الآن؟"),
-    a: L(
-      "Not yet. The first collection is still being sampled. Prices on the site are estimates, and the pre-order window will be announced on Instagram.",
-      "ليس بعد. المجموعة الأولى ما زالت في مرحلة العينات. الأسعار في الموقع تقديرية، وسيُعلن عن فترة الطلب المسبق على إنستغرام.",
     ),
   },
   {

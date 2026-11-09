@@ -113,28 +113,6 @@
     });
   }
 
-  // Product gallery: highlight the thumbnail for the image in view ------------
-  const track = $(".gallery-track");
-  if (track && "IntersectionObserver" in window) {
-    const thumbs = $$(".gallery-thumbs a");
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          thumbs.forEach((t) => t.toggleAttribute("aria-current", t.hash === "#" + entry.target.id));
-        }
-      },
-      { root: track, threshold: 0.6 },
-    );
-    $$("figure", track).forEach((f) => io.observe(f));
-    thumbs.forEach((t) =>
-      t.addEventListener("click", (e) => {
-        e.preventDefault();
-        const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-        $(t.hash).scrollIntoView({ behavior, block: "nearest", inline: "start" });
-      }),
-    );
-  }
   // Sudanese easter eggs -----------------------------------------------------
   // Click the jebena, the sun or the felucca in the hero; type "shai" or "sudan"
   // anywhere; look at the footer on a Friday.
@@ -289,7 +267,7 @@
 
   // Content rises into view, a little staggered within each group.
   if ("IntersectionObserver" in window && !reduceMotion) {
-    const targets = $$(".section-head, .values li, .event-card, .merch-card, .link-card, .steps li, .team-card, .card, .subscribe, .prayer-grid li, .join-ways li, .faq-list details, .empty-state, .next-note, .notice");
+    const targets = $$(".section-head, .values li, .event-card, .link-card, .steps li, .team-card, .card, .subscribe, .prayer-grid li, .join-ways li, .faq-list details, .empty-state, .next-note");
     const seen = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {

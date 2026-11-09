@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { site, events, merch } from "../src/content.mjs";
+import { site, events } from "../src/content.mjs";
 import { pages, layout, renderPage, notFoundPage, esc } from "../src/templates.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -29,11 +29,6 @@ for (const e of events) {
   if (e.date && (!/^\d{4}-\d{2}-\d{2}$/.test(e.date) || new Date(e.date + "T12:00:00Z").toISOString().slice(0, 10) !== e.date))
     problems.push(`Event "${e.id}" has an invalid date "${e.date}" (use YYYY-MM-DD)`);
   for (const k of ["title", "summary", "poster"]) if (!e[k]?.en || !e[k]?.ar) problems.push(`Event "${e.id}" is missing ${k} in English or Arabic`);
-}
-for (const p of merch) {
-  for (const f of ["studio", "card", "1", "2", "3", "4"]) {
-    if (!fs.existsSync(path.join(src, "assets/merch", `${p.id}-${f}.jpg`))) problems.push(`Missing image src/assets/merch/${p.id}-${f}.jpg`);
-  }
 }
 if (problems.length) {
   console.error("Content problems:\n  " + problems.join("\n  "));
@@ -120,14 +115,10 @@ function redirect(rel, to, script = "") {
 }
 redirect("volunteer.html", `${base}contact.html#volunteer`);
 redirect("gallery.html", `${base}events.html#past`);
-redirect("checkout.html", `${base}merch.html`);
 redirect("manage.html", base);
-const productIds = JSON.stringify(merch.map((p) => p.id));
-redirect(
-  "product.html",
-  `${base}merch.html`,
-  `var i=new URLSearchParams(location.search).get("item");if(${productIds}.indexOf(i)>-1)location.replace("${base}merch/"+i+".html")`,
-);
+// The merch preview was retired; send its old addresses home.
+for (const old of ["checkout.html", "product.html", "merch.html", "merch/tee.html", "merch/hoodie.html", "merch/tote.html"]) redirect(old, base);
+for (const old of ["merch.html", "merch/tee.html", "merch/hoodie.html", "merch/tote.html"]) redirect("ar/" + old, base + "ar/");
 
 // ---------------------------------------------------------------------------
 // Calendar feeds

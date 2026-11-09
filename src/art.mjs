@@ -167,10 +167,6 @@ export function vignette(name) {
     resources: `<g class="moon"><circle cx="530" cy="62" r="28" fill="${C.sun}"/><circle cx="543" cy="54" r="25" fill="var(--sand)"/></g>
       <g fill="${C.terracotta}">${[[330, 52], [400, 34], [460, 96], [580, 30], [590, 104], [350, 110]].map(([x, y], i) => `<path class="twinkle" style="--d:${i * 0.4}s" d="M${x} ${y - 6}l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6Z"/>`).join("")}</g>
       ${smallPyramids(430)}${ground(id)}`,
-    merch: `${palm({ x: 300, y: 178, scale: 0.75 })}${palm({ x: 580, y: 176, scale: 0.75, delay: 0.7 })}
-      <path d="M290 86Q440 126 566 80" fill="none" stroke="${C.trunk}" stroke-width="2"/>
-      ${[[360, 101, "#37614c"], [438, 106, C.maroon], [512, 99, C.terracotta]].map(([x, y, col], i) => `<g transform="translate(${x} ${y})"><g class="swing" style="--d:${i * 0.5}s"><rect x="-24" y="0" width="48" height="60" rx="2" fill="${col}"/><rect x="-19" y="5" width="38" height="50" fill="url(#weave-${id})" opacity=".8"/><circle cx="-16" cy="0" r="3" fill="${C.door}"/><circle cx="16" cy="0" r="3" fill="${C.door}"/></g></g>`).join("")}
-      ${ground(id)}`,
     team: `${ground(id)}<g transform="translate(372 34)">${jebena()}</g><g fill="${C.cream}" stroke="${C.clay}" stroke-width="2"><path d="M486 140h22l-3 16h-16Z"/><path d="M518 142h22l-3 16h-16Z"/><path d="M330 142h22l-3 16h-16Z"/></g>${palm({ x: 576, y: 178, scale: 0.6, delay: 0.4 })}`,
     contact: `${smallPyramids(400)}${ground(id)}<g class="drift-birds slow">${birds({ x: 0, y: 40, scale: 1 })}</g>${felucca({ x: 500, y: 150, scale: 0.6 })}`,
     lost: `${sun({ x: 540, y: 64, r: 28 })}${ground(id)}<g class="sail-back">${felucca({ x: 0, y: 150, scale: 0.6 })}</g>`,
