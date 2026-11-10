@@ -1,12 +1,9 @@
-// The illustration kit: a Sudanese landscape (Jebel Barkal, the Meroë pyramids, doum palms,
-// the Nile with a felucca, papyrus, a jebena on a rug) drawn as small SVG builders.
+// Small illustrations: Jebel Barkal, Meroë pyramids, doum palms and a jebena, drawn as SVG builders
+// for the event posters, the footer skyline and a few accents. (Large scenes use photos instead.)
 //
-// Colours are never hard-coded in the scenes: every fill reads a CSS variable (--sky-1, --dune-2,
-// --stone-lit…), and site.css defines those variables for four times of day (data-phase="dawn",
-// "day", "dusk", "night"). The same drawing therefore works as a sunrise, noon, sunset or night scene.
-//
-// Motion follows the "no decorative loops" rule: scenes assemble once (.layer, .rise-sun) and
-// otherwise only move with scrolling or when clicked. All artwork is decorative (aria-hidden).
+// Poster colours are never hard-coded: fills read CSS variables (--sky-1, --dune-2, --stone-lit…)
+// that site.css defines per time of day (data-phase="dawn" | "day" | "dusk" | "night").
+// All artwork is decorative (aria-hidden) and static.
 
 const v = (name) => `style="fill:var(--${name})"`;
 const stroke = (name, w) => `style="fill:none;stroke:var(--${name});stroke-width:${w};stroke-linecap:round"`;
@@ -63,23 +60,6 @@ export function palm({ x, y, s = 1 }) {
 </g>`;
 }
 
-export function felucca(s = 1) {
-  return `<g transform="scale(${s})">
-  <path d="M0 26h56l-8 10H8Z" ${v("trunk")}/>
-  <path d="M26 26V-28" ${stroke("trunk", 2.5)}/>
-  <path d="M27-26 54 20H27Z" ${v("sail")}/>
-  <path d="M25-18 6 20h19Z" ${v("sail-shade")}/>
-</g>`;
-}
-
-// Papyrus clump at the water's edge.
-function papyrus(x, y, s = 1) {
-  const stems = [[-14, -46], [-6, -58], [2, -52], [10, -62], [18, -44]];
-  return `<g transform="translate(${x} ${y}) scale(${s})">
-  ${stems.map(([dx, dy]) => `<path d="M0 0Q${dx * 0.4} ${dy * 0.5} ${dx} ${dy}" ${stroke("leaf", 2)}/><path d="M${dx} ${dy}l-7-6m7 6 0-9m0 9 7-6" ${stroke("leaf", 1.6)}/>`).join("")}
-</g>`;
-}
-
 export function jebena(steam = true) {
   return `<ellipse cx="74" cy="128" rx="34" ry="5" fill="#2a1416" opacity=".35"/>
 <path d="M70 56c-18 0-25 18-20 34" fill="none" stroke="#c98a5e" stroke-width="5" stroke-linecap="round"/>
@@ -94,27 +74,17 @@ export function jebena(steam = true) {
 ${steam ? `<g class="steam" fill="none" stroke="#e6c9a7" stroke-width="2.2" stroke-linecap="round" opacity=".8"><path d="M70 32c-5-6 1-10-1-16"/><path d="M80 32c-5-6 1-10-1-16"/></g>` : ""}`;
 }
 
-// A textile laid out as a rug, with a jebena and two cups: a gathering on the riverbank.
-function picnic(id, x, y, s = 1) {
-  return `<g transform="translate(${x} ${y}) scale(${s})" data-egg="jebena" class="egg egg-jebena">
-  <path d="M0 34h200l-30-34H30Z" fill="#37614c"/>
-  <path d="M8 30h184l-24-26H34Z" fill="url(#weave-${id})"/>
-  <g transform="translate(34 -68) scale(.74)">${jebena()}</g>
-  <g fill="#fff8e8" stroke="#c98a5e" stroke-width="1.5"><path d="M120 8h16l-2.5 12h-11Z"/><path d="M144 11h16l-2.5 12h-11Z"/></g>
-</g>`;
-}
-
 // Sun with a soft glow, and a crescent moon; site.css shows one or the other by time of day.
-function sky(id, { x, y, r, stars, egg = false }) {
+function sky(id, { x, y, r, stars }) {
   const starDots = stars
     .map(([sx, sy, sr]) => `<circle cx="${sx}" cy="${sy}" r="${sr}"/>`)
     .join("");
   return `<g class="stars" ${v("star")}>${starDots}</g>
-<g class="sun-body${egg ? ' egg egg-sun" data-egg="sun' : ""}">
+<g class="sun-body">
   <circle cx="${x}" cy="${y}" r="${r * 3.4}" fill="url(#glow-${id})"/>
   <circle class="sun-disc" cx="${x}" cy="${y}" r="${r}" ${v("sun")}/>
 </g>
-<g class="moon-body${egg ? ' egg egg-sun" data-egg="sun' : ""}">
+<g class="moon-body">
   <path d="M${x + 18} ${y - r * 0.7}a${r * 0.7} ${r * 0.7} 0 1 0 0 ${r * 1.4}a${r * 0.9} ${r * 0.9} 0 0 1 0-${r * 1.4}Z" ${v("moon")}/>
 </g>`;
 }
@@ -124,78 +94,6 @@ function starField(count, w, h, seed = 7) {
   let n = seed;
   const rnd = () => ((n = (n * 9301 + 49297) % 233280) / 233280);
   return Array.from({ length: count }, () => [Math.round(rnd() * w), Math.round(rnd() * h), (rnd() * 1.4 + 0.6).toFixed(1)]);
-}
-
-function birds(x, y, s = 1) {
-  return `<g class="birds" transform="translate(${x} ${y}) scale(${s})" ${stroke("trunk", 2.2)} opacity=".55">
-  <path d="M0 10q8-7 15 0q7-7 15 0"/><path d="M46-18q6-5 11 0q5-5 11 0"/><path d="M30 34q5-4 9 0q4-4 9 0"/>
-</g>`;
-}
-
-// ---------------------------------------------------------------------------
-// Home hero: a full-width landscape in depth. Layers assemble once, then drift with scrolling.
-// ---------------------------------------------------------------------------
-export function heroScene() {
-  const id = "hero";
-  const pyramids = [
-    { x: 905, top: 216, half: 30, base: 322 },
-    { x: 1338, top: 228, half: 26, base: 320 },
-    { x: 990, top: 152, half: 42, base: 326 },
-    { x: 1248, top: 142, half: 46, base: 326, chapel: true },
-    { x: 1180, top: 192, half: 34, base: 324 },
-    { x: 1090, top: 96, half: 58, base: 330, chapel: true },
-  ];
-  const layer = (i, depth, body) => `<g data-depth="${depth}"><g class="layer" style="--i:${i}">${body}</g></g>`;
-  return svg(
-    "0 0 1600 520",
-    `${defs(id)}
-${layer(0, 0.35, `<g class="rise-sun">${sky(id, { x: 1170, y: 150, r: 52, stars: starField(46, 1600, 260), egg: true })}</g>`)}
-${layer(1, 0.3, `${mesa(150, 312, 1)}<rect x="0" y="180" width="1600" height="140" fill="url(#haze-${id})"/>`)}
-${layer(2, 0.24, `<path d="M0 300C220 272 380 302 560 294S900 280 1100 290 1420 284 1600 292V520H0Z" ${v("dune-1")}/>`)}
-${layer(3, 0.17, pyramids.map((p) => pyramid(id, p)).join(""))}
-${layer(4, 0.1, `<path d="M0 350C260 322 480 352 700 344S1100 330 1300 340 1520 336 1600 340V520H0Z" ${v("dune-2")}/>
-  <g ${stroke("dune-hi", 2)} opacity=".6"><path d="M180 362q60-10 120 0"/><path d="M560 356q50-8 100 0"/><path d="M1380 352q50-8 100 0"/></g>`)}
-${layer(5, 0.05, `<path d="M0 378C300 364 520 380 800 376S1300 368 1600 378V432C1300 442 1000 428 800 434S300 440 0 434Z" fill="url(#nile-${id})"/>
-  <g class="glints" ${v("glint")}><rect x="1120" y="386" width="100" height="3" rx="1.5"/><rect x="1136" y="396" width="68" height="3" rx="1.5"/><rect x="1110" y="406" width="120" height="3" rx="1.5"/><rect x="1146" y="416" width="48" height="3" rx="1.5"/><rect x="1128" y="425" width="84" height="2.5" rx="1.25"/></g>
-  <g ${stroke("glint", 2)} opacity=".45"><path d="M80 404q14-5 28 0t28 0"/><path d="M420 396q12-5 24 0t24 0"/><path d="M660 414q14-5 28 0"/></g>
-  <g class="felucca-ride"><g transform="translate(560 350)" data-egg="felucca" class="egg egg-felucca"><g class="felucca-bob">${felucca(1.15)}</g><g transform="translate(0 86) scale(1 -1)" opacity=".28">${felucca(1.15)}</g></g></g>`)}
-${layer(6, 0, `<path d="M0 426C300 414 560 432 840 426S1300 416 1600 426V520H0Z" ${v("dune-3")}/>
-  ${papyrus(250, 434, 1)}${papyrus(290, 438, 0.8)}${papyrus(1390, 432, 1.05)}${papyrus(1426, 436, 0.8)}
-  ${picnic(id, 780, 440, 0.95)}`)}
-${layer(7, 0, `<path d="M0 472C360 458 700 476 1040 468S1440 462 1600 470V520H0Z" ${v("dune-4")}/>
-  ${palm({ x: 96, y: 486, s: 1.15 })}${palm({ x: 1505, y: 492, s: 1.55 })}`)}
-${birds(900, 110, 1.1)}`,
-    "hero-scene",
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Inner pages: a full-width horizon along the bottom of each page header,
-// each at its own time of day (the phase is set on the page header in templates.mjs).
-// ---------------------------------------------------------------------------
-export const pagePhases = { events: "dusk", guide: "dawn", resources: "night", team: "day", contact: "day", lost: "dusk" };
-
-export function horizon(name) {
-  const id = "h-" + name;
-  const base = `<path d="M0 118C260 100 520 120 800 112S1340 104 1600 114V200H0Z" ${v("dune-1")}/>`;
-  const nile = `<path d="M0 142C300 132 600 146 900 140S1400 134 1600 142V176C1300 184 1000 172 800 178S300 182 0 178Z" fill="url(#nile-${id})"/>`;
-  const bank = `<path d="M0 172C320 162 640 178 960 172S1400 166 1600 174V200H0Z" ${v("dune-3")}/>`;
-  const smallPyr = (x0) =>
-    [
-      pyramid(id, { x: x0 - 70, top: 66, half: 18, base: 120 }),
-      pyramid(id, { x: x0 + 64, top: 72, half: 16, base: 118 }),
-      pyramid(id, { x: x0, top: 30, half: 30, base: 122, chapel: true }),
-    ].join("");
-  const L = (i, body) => `<g class="layer" style="--i:${i}">${body}</g>`;
-  const scenes = {
-    events: `${L(0, sky(id, { x: 1240, y: 70, r: 26, stars: [] }))}${L(1, mesa(80, 116, 0.5))}${L(2, base + smallPyr(1080))}${L(3, nile + `<g transform="translate(640 120)">${felucca(0.7)}</g>`)}${L(4, bank + palm({ x: 1500, y: 190, s: 0.8 }))}`,
-    guide: `${L(0, sky(id, { x: 800, y: 96, r: 30, stars: [] }))}${L(1, mesa(1000, 116, 0.42))}${L(2, base + pyramid(id, { x: 520, top: 70, half: 18, base: 120 }))}${L(3, nile)}${L(4, bank + palm({ x: 140, y: 190, s: 0.8 }) + palm({ x: 1460, y: 194, s: 0.9 }) + papyrus(1300, 180, 0.7))}`,
-    resources: `${L(0, sky(id, { x: 1250, y: 56, r: 24, stars: starField(40, 1600, 100, 3) }))}${L(1, mesa(60, 116, 0.5))}${L(2, base + smallPyr(960))}${L(3, nile)}${L(4, bank + palm({ x: 1480, y: 190, s: 0.75 }))}`,
-    team: `${L(0, sky(id, { x: 1300, y: 50, r: 22, stars: [] }))}${L(1, mesa(120, 116, 0.45))}${L(2, base + smallPyr(1120))}${L(3, nile)}${L(4, bank + picnic(id, 700, 150, 0.7) + palm({ x: 1500, y: 192, s: 0.8 }) + papyrus(300, 180, 0.7))}`,
-    contact: `${L(0, sky(id, { x: 300, y: 56, r: 22, stars: [] }))}${L(1, mesa(1040, 116, 0.42))}${L(2, base)}${L(3, nile + `<g transform="translate(860 120)">${felucca(0.7)}</g>` + birds(560, 40, 0.9))}${L(4, bank + palm({ x: 160, y: 190, s: 0.8 }) + papyrus(1380, 180, 0.7))}`,
-    lost: `${L(0, sky(id, { x: 1200, y: 70, r: 26, stars: [] }))}${L(1, base)}${L(2, nile + `<g transform="translate(760 120)">${felucca(0.7)}</g>`)}${L(3, bank)}`,
-  };
-  return svg("0 0 1600 200", defs(id) + (scenes[name] || scenes.events), "horizon");
 }
 
 // ---------------------------------------------------------------------------

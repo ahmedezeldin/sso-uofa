@@ -157,37 +157,10 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove("show"), 5000);
   };
-  const replay = (el) => {
-    el.classList.remove("play");
-    el.getBoundingClientRect();
-    el.classList.add("play");
-  };
-
-  const hero = $("[data-egg-jebena]");
-  const phases = ["dawn", "day", "dusk", "night"];
-  if (hero) {
-    $$("[data-egg]", hero).forEach((part) =>
-      part.addEventListener("click", () => {
-        if (part.dataset.egg === "sun") {
-          // The sun (or moon) moves the sky on to the next time of day.
-          const next = phases[(phases.indexOf(hero.dataset.phase) + 1) % phases.length];
-          hero.dataset.phase = next;
-          hero.dataset.phaseLocked = "true";
-          toast(messages.phases?.[next] || "");
-          return;
-        }
-        const key = "egg" + part.dataset.egg[0].toUpperCase() + part.dataset.egg.slice(1);
-        toast(hero.dataset[key]);
-        replay(part);
-      }),
-    );
-    // Follow the real sky as the day goes on, unless someone has been playing with the sun.
-    setInterval(
-      () => {
-        if (!hero.dataset.phaseLocked && window.ssoSkyPhase) hero.dataset.phase = window.ssoSkyPhase();
-      },
-      5 * 60 * 1000,
-    );
+  // The hero's time-of-day tint follows the real sky as the day goes on.
+  const hero = $(".hero");
+  if (hero && window.ssoSkyPhase) {
+    setInterval(() => (hero.dataset.phase = window.ssoSkyPhase()), 5 * 60 * 1000);
   }
 
   const flagConfetti = () => {
@@ -233,28 +206,14 @@
   // Jumu'ah Mubarak on Fridays (Edmonton time).
   if (edmonton().weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
 
-  // Living illustration ------------------------------------------------------
-  // On narrow screens, anchor the hero landscape on the pyramids side so they stay in view.
-  const scene = $(".hero-scene");
-  if (scene) {
-    const narrow = matchMedia("(max-width: 700px)");
-    const anchor = () =>
-      scene.setAttribute("preserveAspectRatio", narrow.matches ? "xMaxYMax slice" : "xMidYMax slice");
-    narrow.addEventListener("change", anchor);
-    anchor();
-  }
-
-  // Everything else moves only with scrolling: hero layers drift at different speeds
-  // (parallax), the felucca sails down the Nile and the word band slides along.
-  const layers = $$(".hero-scene [data-depth]");
-  const ride = $(".felucca-ride");
+  // Scroll effects: the hero photo drifts slightly slower than the page, and the word band
+  // slides along. Nothing moves unless the visitor scrolls.
+  const heroPhoto = $(".hero-photo");
   const track = $(".ticker-track");
-  if ((layers.length || track) && !reduceMotion) {
+  if ((heroPhoto || track) && !reduceMotion) {
     let queued = false;
     const move = () => {
-      const y = Math.min(scrollY, 1000);
-      layers.forEach((l) => (l.style.transform = `translateY(${(y * Number(l.dataset.depth)).toFixed(1)}px)`));
-      if (ride) ride.style.transform = `translateX(${Math.min(scrollY * 0.9, 820).toFixed(1)}px)`;
+      if (heroPhoto && scrollY < 1200) heroPhoto.style.transform = `translateY(${(scrollY * 0.25).toFixed(1)}px)`;
       if (track) track.style.transform = `translateX(${(-(scrollY * 0.45) % (track.scrollWidth / 2)).toFixed(1)}px)`;
       queued = false;
     };

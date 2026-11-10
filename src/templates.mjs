@@ -12,7 +12,30 @@ import {
   tickerWords,
 } from "./content.mjs";
 import { skyPhase } from "./sky.mjs";
-import { heroScene, horizon, pagePhases, posterArt, posterPhases, skyline, waveEdge, voyage, brewing } from "./art.mjs";
+import { posterArt, posterPhases, skyline, waveEdge, voyage, brewing } from "./art.mjs";
+import fs from "node:fs";
+
+// Photos are freely licensed images from Wikimedia Commons; src/photo-credits.json holds the
+// author, licence and source for each, and every photo shows a credit line linking to them.
+const photoCredits = JSON.parse(fs.readFileSync(new URL("./photo-credits.json", import.meta.url), "utf8"));
+const photoAlt = {
+  hero: L2("The pyramids of Meroë in Bajrawiya, Sudan", "أهرامات مروي في البجراوية، السودان"),
+  events: L2("Pyramids at Jebel Barkal in the evening haze", "أهرامات جبل البركل في ضباب المساء"),
+  guide: L2("Pyramids among the dunes at Meroë", "أهرامات بين الكثبان في مروي"),
+  resources: L2("The royal pyramids at Nuri, Sudan", "الأهرامات الملكية في نوري، السودان"),
+  team: L2("A jebena and tea tray in Wadi Halfa", "جبنة وصينية شاي في وادي حلفا"),
+  contact: L2("Jebel Barkal, the sacred mountain near Karima", "جبل البركل قرب كريمة"),
+};
+// Which photo heads each inner page.
+const pagePhotos = { events: "events", guide: "guide", resources: "resources", team: "team", contact: "contact", lost: "contact" };
+
+function photo(c, key, cls, eager = false) {
+  return `<img class="${cls}" src="${c.asset(`photos/${key}.jpg`)}" srcset="${c.asset(`photos/${key}-sm.jpg`)} 900w, ${c.asset(`photos/${key}.jpg`)} 2000w" sizes="100vw" alt="${esc(c.t(photoAlt[key]))}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+}
+function photoCredit(c, key) {
+  const p = photoCredits[key];
+  return `<a class="photo-credit" href="${c.urlFor("credits")}#${key}">${c.tr("Photo", "صورة")}: ${esc(p.artist)} · ${esc(p.license)}</a>`;
+}
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -56,6 +79,11 @@ export const pages = {
     title: L2("Our team", "فريقنا"),
     description: L2("Meet the SSO UofA executive team.", "تعرّف على الفريق التنفيذي للمنظمة."),
   },
+  credits: {
+    path: "credits.html",
+    title: L2("Photo credits", "حقوق الصور"),
+    description: L2("Credits for the photos used on the SSO UofA website.", "حقوق الصور المستخدمة في موقع المنظمة."),
+  },
   contact: {
     path: "contact.html",
     title: L2("Get involved", "شارك معنا"),
@@ -96,8 +124,8 @@ function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
 }
 // Inner-page header band; `scene` picks the small animated illustration on its end side (see art.mjs).
 function pageHead(c, { kicker, title, intro, scene }) {
-  const phase = pagePhases[scene] || "day";
-  return `<div class="page-head scene" data-phase="${phase}"><div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${scene ? horizon(scene) : ""}</div>`;
+  const key = pagePhotos[scene];
+  return `<div class="page-head${key ? " has-photo" : ""}">${key ? photo(c, key, "head-photo", true) : ""}<div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${key ? photoCredit(c, key) : ""}</div>`;
 }
 
 export function formatDate(c, iso, opts = { year: "numeric", month: "long", day: "numeric" }) {
@@ -152,12 +180,6 @@ export function layout(c, key, main) {
 <script src="${c.asset("site.js")}" defer></script>
 <script type="application/json" id="egg-messages">${JSON.stringify({
     shai: c.tr("Shai with milk or without? (With. Obviously.)", "شاي بلبن ولا سادة؟ (بلبن طبعاً)"),
-    phases: {
-      dawn: c.tr("Fajr light over Meroë.", "نور الفجر فوق مروي."),
-      day: c.tr("Midday sun. Time for shade and shai.", "شمس الضهر… وقت الضل والشاي."),
-      dusk: c.tr("Maghrib over the Nile.", "المغرب على النيل."),
-      night: c.tr("A crescent over the pyramids. Goodnight from SSO.", "هلال فوق الأهرامات. تصبحوا على خير."),
-    },
     sudan: c.tr("السودان في القلب · Sudan, always in our hearts.", "السودان في القلب."),
   }).replace(/</g, "\\u003c")}</script>
 </head>
@@ -202,6 +224,7 @@ ${main}
         ${navItems.map((n) => `<li><a href="${c.urlFor(n)}">${c.t(pages[n].title)}</a></li>`).join("")}
         <li><a href="${site.instagram}" ${external}>Instagram ${extIcon(c)}</a></li>
         <li><a href="${site.membership}" ${external}>Rubric ${extIcon(c)}</a></li>
+        <li><a href="${c.urlFor("credits")}">${c.t(pages.credits.title)}</a></li>
       </ul>
     </nav>
   </div>
@@ -308,11 +331,10 @@ function homePage(c) {
   const { upcoming, past } = eventLists(c, c.today);
   const recent = past.filter((e) => e.date).slice(0, 3);
   const star = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`;
-  return `<section class="hero scene" data-phase="day"
-  data-egg-jebena="${esc(c.tr("The jebena’s always on. Come for coffee, leave with friends.", "الجبنة دايماً شغالة. تعال اشرب جبنة وارجع بأصحاب."))}"
-  data-egg-sun="${esc(c.tr("We brought the Khartoum sun with us. Edmonton winter doesn’t scare us.", "جبنا شمس الخرطوم معانا… شتاء إدمنتون ما بيخوفنا."))}"
-  data-egg-felucca="${esc(c.tr("All aboard! Next stop: Al-Mogran, where the Blue and White Nile meet.", "اركب المركب! المحطة الجاية المقرن، ملتقى النيلين."))}">
+  return `<section class="hero" data-phase="day">
   <script>${skyScript}</script>
+  ${photo(c, "hero", "hero-photo", true)}
+  <div class="hero-wash" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <p class="eyebrow">${c.tr("University of Alberta · Edmonton", "جامعة ألبرتا · إدمونتون")}</p>
@@ -325,7 +347,7 @@ function homePage(c) {
     </div>
     <p class="hero-note" lang="ar" dir="rtl" aria-hidden="true">أهلاً بيك</p>
   </div>
-  ${heroScene()}
+  ${photoCredit(c, "hero")}
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
     .map(
@@ -579,6 +601,29 @@ export function notFoundPage(c) {
 <div class="wrap section"><p class="actions"><a class="button" href="${c.urlFor("home")}">${c.tr("Back to home", "العودة للرئيسية")}</a><a class="button ghost" href="${c.urlFor("events")}">${c.tr("See events", "شوف الفعاليات")}</a></p></div>`;
 }
 
+function creditsPage(c) {
+  return `${pageHead(c, {
+    title: c.t(pages.credits.title),
+    intro: c.tr(
+      "The photos on this site come from Wikimedia Commons and are used under their free licences. We resized and compressed them for the web.",
+      "الصور في هذا الموقع من ويكيميديا كومنز وتُستخدم بموجب تراخيصها الحرة. قمنا بتصغيرها وضغطها للويب.",
+    ),
+  })}
+<section class="wrap section">
+  <ul class="credits-list">
+    ${Object.entries(photoCredits)
+      .map(
+        ([key, p]) => `<li id="${key}">
+      <img src="${c.asset(`photos/${key}-sm.jpg`)}" alt="" width="180" height="120" loading="lazy">
+      <div><b>${esc(c.t(photoAlt[key]))}</b>
+      <span>${c.tr("By", "تصوير")} ${esc(p.artist)} · <a href="${p.licenseUrl}" ${external}>${esc(p.license)} ${extIcon(c)}</a> · <a href="${p.source}" ${external}>${c.tr("Source", "المصدر")} ${extIcon(c)}</a></span></div>
+    </li>`,
+      )
+      .join("")}
+  </ul>
+</section>`;
+}
+
 export function renderPage(c, key) {
   const page = pages[key];
   return {
@@ -588,5 +633,6 @@ export function renderPage(c, key) {
     resources: resourcesPage,
     team: teamPage,
     contact: contactPage,
+    credits: creditsPage,
   }[key](c);
 }
