@@ -29,8 +29,8 @@ const photoAlt = {
 // Which photo heads each inner page.
 const pagePhotos = { events: "events", guide: "guide", resources: "resources", team: "team", contact: "contact", lost: "contact" };
 
-function photo(c, key, cls, eager = false) {
-  return `<img class="${cls}" src="${c.asset(`photos/${key}.jpg`)}" srcset="${c.asset(`photos/${key}-sm.jpg`)} 900w, ${c.asset(`photos/${key}.jpg`)} 2000w" sizes="100vw" alt="${esc(c.t(photoAlt[key]))}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+function photo(c, key, cls, eager = false, sizes = "100vw") {
+  return `<img class="${cls}" src="${c.asset(`photos/${key}.jpg`)}" srcset="${c.asset(`photos/${key}-sm.jpg`)} 900w, ${c.asset(`photos/${key}.jpg`)} 2000w" sizes="${sizes}" alt="${esc(c.t(photoAlt[key]))}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
 }
 
 export const esc = (s) =>
@@ -237,21 +237,29 @@ ${main}
 // ---------------------------------------------------------------------------
 // Events
 // ---------------------------------------------------------------------------
+const icons = {
+  date: '<path d="M3 5.5h14v11H3zM3 9h14M7 3v4M13 3v4"/>',
+  time: '<circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/>',
+  place: '<path d="M10 17s5-4.6 5-8.5a5 5 0 0 0-10 0C5 12.4 10 17 10 17z"/><circle cx="10" cy="8.5" r="1.8"/>',
+};
+const icon = (name) =>
+  `<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg>`;
+
 function eventCard(c, e, { headingLevel = 3 } = {}) {
   const h = `h${headingLevel}`;
   const dateLabel = e.date ? formatDate(c, e.date) : c.tr("Instagram highlight", "قصص مميزة");
   const details = [
-    e.time && [c.tr("Time", "الوقت"), c.t(e.time)],
-    e.venue && [c.tr("Where", "المكان"), c.t(e.venue)],
-    e.access && [c.tr("Accessibility", "إمكانية الوصول"), c.t(e.access)],
+    e.time && ["time", c.tr("Time", "الوقت"), c.t(e.time)],
+    e.venue && ["place", c.tr("Where", "المكان"), c.t(e.venue)],
+    e.access && ["place", c.tr("Accessibility", "إمكانية الوصول"), c.t(e.access)],
   ].filter(Boolean);
   return `<article class="event-card"${e.date ? ` data-event-date="${e.date}"` : ""}>
   <div class="poster scene poster-${e.posterStyle}" data-phase="${posterPhases[e.posterStyle] || "dusk"}" aria-hidden="true">${posterArt(e.posterStyle)}<span>SSO UofA</span><b>${c.t(e.poster)}</b></div>
   <div class="event-body">
-    <p class="event-meta"><span class="tag">${c.t(eventCategories[e.category])}</span>${e.date ? `<time datetime="${e.date}">${dateLabel}</time>` : `<span>${dateLabel}</span>`}</p>
+    <p class="event-meta"><span class="tag">${c.t(eventCategories[e.category])}</span>${e.date ? `<time datetime="${e.date}">${icon("date")}${dateLabel}</time>` : `<span>${dateLabel}</span>`}</p>
     <${h}>${c.t(e.title)}</${h}>
     <p>${c.t(e.summary)}</p>
-    ${details.length ? `<dl class="event-details">${details.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>` : ""}
+    ${details.length ? `<dl class="event-details">${details.map(([ic, k, v]) => `<div>${icon(ic)}<dt class="sr-only">${k}</dt><dd>${v}</dd></div>`).join("")}</dl>` : ""}
     <p class="event-actions">
       ${e.source ? `<a class="text-link" href="${e.source}" ${external}>${c.tr("View on Instagram", "عرض على إنستغرام")} ${extIcon(c)}</a>` : ""}
       ${e.date ? `<a class="text-link only-upcoming" href="${c.base}assets/events/${e.id}.ics" download>${c.tr("Add to calendar", "أضف إلى التقويم")}</a>` : ""}
@@ -351,6 +359,7 @@ function homePage(c) {
     )
     .join("")}</div></div>
 <section class="wrap section about" aria-labelledby="about-title">
+  <div class="about-text">
   ${sectionHead(c, {
     id: "about-title",
     title: c.tr("The Sudanese community at UAlberta", "مجتمع الطلاب السودانيين في جامعة ألبرتا"),
@@ -364,6 +373,11 @@ function homePage(c) {
     <li><b>${c.tr("A first friend on campus", "أول صاحب في الجامعة")}</b><p>${c.tr("If you’ve just arrived, we’ll help you find your way around and introduce you to people.", "لو لسه واصل، بنساعدك تعرف الجامعة وبنعرّفك على الناس.")}</p></li>
     <li><b>${c.tr("Community and solidarity events", "فعاليات مجتمعية وتضامنية")}</b><p>${c.tr("BBQs and get-togethers with other campus groups.", "شواء ولقاءات مع مجموعات جامعية تانية.")}</p></li>
   </ol>
+  </div>
+  <figure class="collage" aria-hidden="true">
+    ${photo(c, "guide", "collage-main", false, "(max-width: 860px) 90vw, 40vw")}
+    ${photo(c, "team", "collage-inset", false, "(max-width: 860px) 45vw, 20vw")}
+  </figure>
 </section>
 <section class="band" aria-labelledby="next-title">
   ${waveEdge("var(--cream)", "top")}
@@ -403,7 +417,7 @@ function homePage(c) {
 </section>
 <section class="wrap section faq" aria-labelledby="faq-title">
   ${sectionHead(c, { id: "faq-title", title: c.tr("Questions people ask us", "أسئلة بتتكرر") })}
-  <div class="faq-list">${faqs.map((f) => `<details><summary>${c.t(f.q)}</summary><p>${c.t(f.a)}</p></details>`).join("")}</div>
+  <div class="faq-list">${faqs.map((f) => `<details name="faq"><summary>${c.t(f.q)}</summary><p>${c.t(f.a)}</p></details>`).join("")}</div>
 </section>`;
 }
 
@@ -504,7 +518,7 @@ function teamPage(c) {
   <ul class="team-grid">
     ${team
       .map(
-        (m, i) => `<li class="team-card" style="--tone:${i % 4}">
+        (m, i) => `<li class="team-card tone-${i % 4}">
       ${m.photo ? `<img src="${c.asset(m.photo)}" alt="" width="400" height="500" loading="lazy">` : `<div class="portrait" aria-hidden="true"><span>${initials(m.name)}</span></div>`}
       <p class="role">${c.t(m.role)}</p>
       <h2 dir="ltr">${m.name}</h2>
