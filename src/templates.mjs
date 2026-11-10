@@ -15,8 +15,8 @@ import { skyPhase } from "./sky.mjs";
 import { posterArt, posterPhases, skyline, waveEdge, voyage, brewing } from "./art.mjs";
 import fs from "node:fs";
 
-// Photos are freely licensed images from Wikimedia Commons; src/photo-credits.json holds the
-// author, licence and source for each, and every photo shows a credit line linking to them.
+// Photos are freely licensed images from Wikimedia Commons. Their licences require crediting the
+// photographers: src/photo-credits.json holds the details, shown on /credits.html (linked in the footer).
 const photoCredits = JSON.parse(fs.readFileSync(new URL("./photo-credits.json", import.meta.url), "utf8"));
 const photoAlt = {
   hero: L2("The pyramids of Meroë in Bajrawiya, Sudan", "أهرامات مروي في البجراوية، السودان"),
@@ -31,10 +31,6 @@ const pagePhotos = { events: "events", guide: "guide", resources: "resources", t
 
 function photo(c, key, cls, eager = false) {
   return `<img class="${cls}" src="${c.asset(`photos/${key}.jpg`)}" srcset="${c.asset(`photos/${key}-sm.jpg`)} 900w, ${c.asset(`photos/${key}.jpg`)} 2000w" sizes="100vw" alt="${esc(c.t(photoAlt[key]))}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
-}
-function photoCredit(c, key) {
-  const p = photoCredits[key];
-  return `<a class="photo-credit" href="${c.urlFor("credits")}#${key}">${c.tr("Photo", "صورة")}: ${esc(p.artist)} · ${esc(p.license)}</a>`;
 }
 
 export const esc = (s) =>
@@ -125,7 +121,7 @@ function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
 // Inner-page header band; `scene` picks the small animated illustration on its end side (see art.mjs).
 function pageHead(c, { kicker, title, intro, scene }) {
   const key = pagePhotos[scene];
-  return `<div class="page-head${key ? " has-photo" : ""}">${key ? photo(c, key, "head-photo", true) : ""}<div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${key ? photoCredit(c, key) : ""}</div>`;
+  return `<div class="page-head${key ? " has-photo" : ""}">${key ? photo(c, key, "head-photo", true) : ""}<div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div></div>`;
 }
 
 export function formatDate(c, iso, opts = { year: "numeric", month: "long", day: "numeric" }) {
@@ -347,7 +343,6 @@ function homePage(c) {
     </div>
     <p class="hero-note" lang="ar" dir="rtl" aria-hidden="true">أهلاً بيك</p>
   </div>
-  ${photoCredit(c, "hero")}
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
     .map(

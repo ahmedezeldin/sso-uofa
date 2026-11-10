@@ -213,7 +213,7 @@
   if ((heroPhoto || track) && !reduceMotion) {
     let queued = false;
     const move = () => {
-      if (heroPhoto && scrollY < 1200) heroPhoto.style.transform = `translateY(${(scrollY * 0.25).toFixed(1)}px)`;
+      if (heroPhoto && scrollY < 1200) heroPhoto.style.translate = `0 ${(scrollY * 0.25).toFixed(1)}px`;
       if (track) track.style.transform = `translateX(${(-(scrollY * 0.45) % (track.scrollWidth / 2)).toFixed(1)}px)`;
       queued = false;
     };
@@ -227,6 +227,14 @@
       },
       { passive: true },
     );
+  }
+
+  // The header gains a soft shadow once the page has scrolled.
+  const header = $(".site-header");
+  if (header) {
+    const edge = () => header.classList.toggle("is-scrolled", scrollY > 8);
+    addEventListener("scroll", edge, { passive: true });
+    edge();
   }
 
   // The felucca in the header sails as far along the Nile as you've read.

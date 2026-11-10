@@ -46,11 +46,13 @@ Put portraits in `src/assets/team/` (portrait orientation, about 800×1000, JPEG
 
 ### Sudanese touches
 
-The home page and each inner page open on a photo of Sudan (Meroë, Jebel Barkal, Nuri, a jebena in Wadi Halfa). They are freely licensed images from Wikimedia Commons, kept in `src/assets/photos/`, with author and licence in `src/photo-credits.json`. Every photo shows a credit line, and `/credits.html` lists them all, as the licences require. The home photo is tinted by the real time of day in Edmonton (`src/sky.mjs`).
+The home page and each inner page open on a photo of Sudan (Meroë, Jebel Barkal, Nuri, a jebena in Wadi Halfa). They are freely licensed images from Wikimedia Commons, kept in `src/assets/photos/`, with author and licence in `src/photo-credits.json`. Their licences (CC BY / CC BY-SA) require crediting the photographers, so `/credits.html` lists them and is linked from the footer. Keep that page if you keep these photos. The home photo is tinted by the real time of day in Edmonton (`src/sky.mjs`).
 
 **When the club has its own photos**, use those instead: save `name.jpg` (2000px wide) and `name-sm.jpg` (900px) in `src/assets/photos/`, add an entry to `photo-credits.json` and a description to `photoAlt` in `templates.mjs`, and point the page at it in `pagePhotos`. Photos of real members and events will do more for the site than any landscape.
 
 Small illustrations (`src/art.mjs`) remain on the event posters and in the footer skyline.
+
+Motion is deliberately quiet: smooth page-to-page transitions, one entrance per page, gentle reveals as you scroll and small hover feedback. Nothing loops, and visitors who prefer reduced motion get none of it.
 
 There are a few easter eggs: type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
 
