@@ -466,51 +466,401 @@ html[dir="rtl"] .ext {
   }
 }
 
-/* Page heads -------------------------------------------------------------- */
-/* Inner-page header band; each page has its own small animated scene on the end side. */
-.page-head {
+/* Times of day ------------------------------------------------------------ */
+/* Every scene (home hero, page headers, event posters) is drawn with these variables.
+   data-phase picks the palette; on the home page site.js sets it from Edmonton's real
+   sunrise and sunset, and clicking the sun or moon cycles through them. */
+@property --sky-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f8ecd6;
+}
+@property --sky-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f6dfba;
+}
+@property --sky-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f2cc98;
+}
+@property --sun {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fff3cf;
+}
+@property --sun-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fde2a2;
+}
+@property --moon {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f6e7c8;
+}
+@property --star {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fff6e0;
+}
+@property --far {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d6a27a;
+}
+@property --dune-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e7b17d;
+}
+@property --dune-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #eebf89;
+}
+@property --dune-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d8925f;
+}
+@property --dune-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #bf7551;
+}
+@property --dune-hi {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f7d7a8;
+}
+@property --stone-lit {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #dca06d;
+}
+@property --stone-shade {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a9623f;
+}
+@property --nile-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #80ae9f;
+}
+@property --nile-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3f6f63;
+}
+@property --glint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fff7e2;
+}
+@property --leaf {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #36594a;
+}
+@property --trunk {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6b3a2d;
+}
+@property --sail {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fbf1de;
+}
+@property --sail-shade {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ead6b4;
+}
+@property --shadow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --scene-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #2c2824;
+}
+@property --scene-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #5c5349;
+}
+@property --scene-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #612c32;
+}
+@property --sun-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --moon-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --stars-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --shadow-len {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --glint-op {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.5;
+}
+@property --sun-drop {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+.scene[data-phase="day"] {
+  --sky-1: #f8ecd6;
+  --sky-2: #f6dfba;
+  --sky-3: #f2cc98;
+  --sun: #fff3cf;
+  --sun-glow: #fde2a2;
+  --moon: #f6e7c8;
+  --star: #fff6e0;
+  --far: #d6a27a;
+  --dune-1: #e7b17d;
+  --dune-2: #eebf89;
+  --dune-3: #d8925f;
+  --dune-4: #bf7551;
+  --dune-hi: #f7d7a8;
+  --stone-lit: #dca06d;
+  --stone-shade: #a9623f;
+  --nile-1: #80ae9f;
+  --nile-2: #3f6f63;
+  --glint: #fff7e2;
+  --leaf: #36594a;
+  --trunk: #6b3a2d;
+  --sail: #fbf1de;
+  --sail-shade: #ead6b4;
+  --shadow: rgb(110 52 32 / 0.2);
+  --scene-ink: #2c2824;
+  --scene-muted: #5c5349;
+  --scene-accent: #612c32;
+  --sun-drop: 0px;
+  --sun-on: 1;
+  --moon-on: 0;
+  --stars-on: 0;
+  --shadow-len: 1;
+  --glint-op: 0.45;
+}
+.scene[data-phase="dawn"] {
+  --sky-1: #f7e6de;
+  --sky-2: #f3c9b2;
+  --sky-3: #efa883;
+  --sun: #ffe6bf;
+  --sun-glow: #ffc39a;
+  --moon: #f6e7c8;
+  --star: #fff6e0;
+  --far: #c98e83;
+  --dune-1: #dca084;
+  --dune-2: #e5ae8b;
+  --dune-3: #c88366;
+  --dune-4: #a8664f;
+  --dune-hi: #f2c6a8;
+  --stone-lit: #e09d7c;
+  --stone-shade: #9a5a4a;
+  --nile-1: #9db3b0;
+  --nile-2: #536f70;
+  --glint: #ffe2c4;
+  --leaf: #3b5450;
+  --trunk: #5d3530;
+  --sail: #fdeee2;
+  --sail-shade: #ecd0c0;
+  --shadow: rgb(110 52 50 / 0.22);
+  --scene-ink: #2c2824;
+  --scene-muted: #5a4a44;
+  --scene-accent: #612c32;
+  --sun-drop: 110px;
+  --sun-on: 1;
+  --moon-on: 0;
+  --stars-on: 0;
+  --shadow-len: 1.8;
+  --glint-op: 0.7;
+}
+.scene[data-phase="dusk"] {
+  --sky-1: #4a2335;
+  --sky-2: #9a4744;
+  --sky-3: #ec9a5c;
+  --sun: #ffd690;
+  --sun-glow: #ff9f5c;
+  --moon: #f6e7c8;
+  --star: #fff6e0;
+  --far: #7f4544;
+  --dune-1: #b86c4c;
+  --dune-2: #c97d52;
+  --dune-3: #9c553c;
+  --dune-4: #763c2d;
+  --dune-hi: #e3a06c;
+  --stone-lit: #e8945e;
+  --stone-shade: #6f3530;
+  --nile-1: #b56f5b;
+  --nile-2: #443149;
+  --glint: #ffd38f;
+  --leaf: #2b3530;
+  --trunk: #3a2320;
+  --sail: #fbe0c2;
+  --sail-shade: #e2b58f;
+  --shadow: rgb(50 20 25 / 0.32);
+  --scene-ink: #fff3e4;
+  --scene-muted: #f6dccb;
+  --scene-accent: #ffd690;
+  --sun-drop: 120px;
+  --sun-on: 1;
+  --moon-on: 0;
+  --stars-on: 0.35;
+  --shadow-len: 2.4;
+  --glint-op: 0.9;
+}
+.scene[data-phase="night"] {
+  --sky-1: #15142a;
+  --sky-2: #2b2240;
+  --sky-3: #5a3548;
+  --sun: #fff3cf;
+  --sun-glow: #c9b8e8;
+  --moon: #f6e7c8;
+  --star: #fff4dc;
+  --far: #3b2a3c;
+  --dune-1: #4f3640;
+  --dune-2: #5d3f45;
+  --dune-3: #432c34;
+  --dune-4: #2e1f27;
+  --dune-hi: #7a5560;
+  --stone-lit: #82605c;
+  --stone-shade: #452e36;
+  --nile-1: #2f3a58;
+  --nile-2: #161c30;
+  --glint: #f6e7c8;
+  --leaf: #1d2726;
+  --trunk: #22171a;
+  --sail: #d9cfc0;
+  --sail-shade: #b5a898;
+  --shadow: rgb(0 0 0 / 0.25);
+  --scene-ink: #f6ecdd;
+  --scene-muted: #dccfc0;
+  --scene-accent: #e6c9a7;
+  --sun-drop: 140px;
+  --sun-on: 0;
+  --moon-on: 1;
+  --stars-on: 1;
+  --shadow-len: 1.2;
+  --glint-op: 0.55;
+}
+.scene {
   position: relative;
   overflow: hidden;
-  padding-block: clamp(48px, 7vw, 88px) clamp(40px, 5vw, 64px);
-  background: var(--sand);
+  color: var(--scene-ink);
+  background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 58%, var(--sky-3) 100%);
+  transition: --sky-1, --sky-2, --sky-3, --sun, --sun-glow, --moon, --star, --far, --dune-1, --dune-2, --dune-3, --dune-4, --dune-hi, --stone-lit, --stone-shade, --nile-1, --nile-2, --glint, --leaf, --trunk, --sail, --sail-shade, --shadow, --scene-ink, --scene-muted, --scene-accent, --sun-on, --moon-on, --stars-on, --shadow-len, --glint-op, --sun-drop;
+  transition-duration: 1.4s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
-.page-head .wrap {
-  position: relative;
-  z-index: 1;
-}
-.page-head .section-head {
-  max-width: min(58%, 720px);
-}
-.vignette {
+/* A whisper of paper grain so the flat colours feel printed rather than digital. */
+.scene::after {
+  content: "";
   position: absolute;
-  inset-inline-end: 0;
-  bottom: 0;
-  width: min(50%, 660px);
-  height: 100%;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
-  mask-image: linear-gradient(to right, transparent, #000 22%);
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-html[dir="rtl"] .vignette,
+.scene .eyebrow {
+  color: var(--scene-accent);
+}
+.scene .intro,
+.scene .lead {
+  color: var(--scene-muted);
+}
+.scene[data-phase="dusk"] .button,
+.scene[data-phase="night"] .button {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--maroon);
+}
+.scene[data-phase="dusk"] .button.ghost,
+.scene[data-phase="night"] .button.ghost {
+  background: transparent;
+  border-color: var(--scene-ink);
+  color: var(--scene-ink);
+}
+/* The terracotta "home." disappears into a sunset sky, so it glows gold after dark. */
+.scene[data-phase="dusk"] h1 em,
+.scene[data-phase="night"] h1 em {
+  color: #ffbf7f;
+}
+.scene[data-phase="dusk"] :focus-visible,
+.scene[data-phase="night"] :focus-visible {
+  outline-color: var(--gold);
+}
+.sun-body {
+  opacity: var(--sun-on);
+  transform: translateY(var(--sun-drop));
+}
+.moon-body {
+  opacity: var(--moon-on);
+}
+/* Short scenes (page headers, posters) only lower the sun a little at dawn and dusk. */
+:is(.horizon, .poster-art) .sun-body {
+  transform: translateY(calc(var(--sun-drop) * 0.22));
+}
+.stars {
+  opacity: var(--stars-on);
+}
+.glints {
+  opacity: var(--glint-op);
+}
+.cast {
+  transform-box: fill-box;
+  transform-origin: 100% 100%;
+  transform: scaleX(var(--shadow-len));
+}
 html[dir="rtl"] .hero-scene,
+html[dir="rtl"] .horizon,
 html[dir="rtl"] .skyline {
   transform: scaleX(-1);
 }
-@media (max-width: 860px) {
-  .page-head {
-    padding-bottom: 0;
-  }
-  .page-head .section-head {
-    max-width: none;
-  }
-  .vignette {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 150px;
-    margin-top: 12px;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
+
+/* Page heads -------------------------------------------------------------- */
+.page-head {
+  --strip-h: clamp(120px, 16vw, 230px);
+  padding-block: clamp(48px, 7vw, 88px) calc(var(--strip-h) + 12px);
+}
+.page-head .wrap {
+  position: relative;
+  z-index: 2;
+}
+.page-head .section-head {
+  max-width: 820px;
+}
+.horizon {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: block;
+  width: 100%;
+  height: var(--strip-h);
 }
 
 /* Footer skyline */
@@ -530,9 +880,15 @@ html[dir="rtl"] .skyline {
 /* Home: hero -------------------------------------------------------------- */
 .hero {
   --scene-h: clamp(250px, 38vw, 540px);
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--cream) 0%, #f8ead2 42%, #f3d5aa 100%);
+}
+/* Stars over the whole sky at night (the scene draws more near the horizon). */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 40% 0;
+  opacity: var(--stars-on);
+  pointer-events: none;
+  background-image: radial-gradient(1.4px 1.4px at 12% 18%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 28% 42%, #fff4dc 50%, transparent 51%), radial-gradient(1.6px 1.6px at 46% 12%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 63% 30%, #fff4dc 50%, transparent 51%), radial-gradient(1.3px 1.3px at 78% 8%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 88% 36%, #fff4dc 50%, transparent 51%), radial-gradient(1.2px 1.2px at 6% 56%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 54% 60%, #fff4dc 50%, transparent 51%), radial-gradient(1.4px 1.4px at 35% 70%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 94% 64%, #fff4dc 50%, transparent 51%);
 }
 .hero-inner {
   position: relative;
@@ -569,7 +925,7 @@ html[lang="ar"] .hero h1 {
   align-self: start;
   justify-self: end;
   margin: clamp(8px, 3vw, 40px) clamp(0px, 4vw, 60px) 0 0;
-  color: var(--maroon);
+  color: var(--scene-accent);
   font-family: var(--font-arabic);
   font-size: clamp(30px, 3.6vw, 52px);
   font-weight: 700;
@@ -586,7 +942,7 @@ html[dir="rtl"] .hero-note {
     padding-bottom: calc(var(--scene-h) * 0.82);
   }
   .hero-note,
-  .hero-scene .drift-birds {
+  .hero-scene .birds {
     display: none;
   }
 }
@@ -597,13 +953,11 @@ html[dir="rtl"] .hero-note {
   padding-block: 18px;
   overflow: hidden;
 }
+/* The band moves with the page as you scroll (site.js), never on its own. */
 .ticker-track {
   display: flex;
   width: max-content;
-  animation: ticker 48s linear infinite;
-}
-.ticker:hover .ticker-track {
-  animation-play-state: paused;
+  will-change: transform;
 }
 .ticker-set {
   display: flex;
@@ -624,156 +978,66 @@ html[dir="rtl"] .hero-note {
   width: 14px;
   flex: none;
 }
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track {
-    animation: none;
-  }
-}
 
-/* Living illustration ------------------------------------------------------ */
-/* Every animated piece of artwork; all of it stops for people who prefer reduced motion. */
-.rise,
-.rise-sun,
-.sway,
-.bob,
-.flap,
-.steam path,
-.twinkle,
-.swing,
-.sun-halo {
-  transform-box: fill-box;
+/* Motion ------------------------------------------------------------------ */
+/* Scenes assemble once, back to front, decelerating as they land. After that nothing
+   moves on its own: the hero only drifts with scrolling and reacts to clicks. */
+.layer {
+  animation: layer-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 0.12s) both;
 }
-.rise {
-  transform-origin: 50% 100%;
-  animation: rise 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both;
-}
-@keyframes rise {
+@keyframes layer-in {
   from {
-    transform: translateY(45%) scaleY(0.5);
+    transform: translateY(36px);
     opacity: 0;
   }
 }
 .rise-sun {
-  animation: sun-up 2.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: sun-up 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 @keyframes sun-up {
   from {
-    transform: translateY(120px);
+    transform: translateY(90px);
     opacity: 0;
   }
 }
-.sun-halo {
-  transform-origin: center;
-  animation: glow 6s ease-in-out infinite;
+/* A flock crosses once as the scene settles (under five seconds). */
+.birds {
+  animation: birds-fly 4.6s cubic-bezier(0.45, 0, 0.55, 1) 1.4s both;
 }
-@keyframes glow {
-  50% {
-    transform: scale(1.1);
-    opacity: 0.5;
+@keyframes birds-fly {
+  0% {
+    transform: translate(-760px, 30px);
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(980px, -40px);
+    opacity: 0;
   }
 }
-.sway {
+
+/* Easter eggs ------------------------------------------------------------- */
+.egg {
+  cursor: pointer;
+}
+.felucca-bob,
+.steam {
+  transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: sway 5.5s ease-in-out var(--d, 0s) infinite alternate;
 }
-@keyframes sway {
-  from {
-    transform: rotate(-1.8deg);
-  }
-  to {
-    transform: rotate(1.8deg);
-  }
+.egg-felucca.play .felucca-bob {
+  animation: hop 0.7s ease-out 2;
 }
-.bob {
-  transform-origin: 50% 100%;
-  animation: bob 3.4s ease-in-out infinite;
-}
-@keyframes bob {
-  50% {
-    transform: translateY(-3px) rotate(-2.5deg);
+@keyframes hop {
+  40% {
+    transform: translateY(-16px) rotate(-8deg);
   }
 }
-.sail-across {
-  animation: sail-across 90s linear infinite;
-}
-.sail-across.slow {
-  animation-duration: 160s;
-}
-@keyframes sail-across {
-  from {
-    transform: translateX(-120px);
-  }
-  to {
-    transform: translateX(1720px);
-  }
-}
-.sail-back {
-  animation: sail-small 34s linear infinite;
-}
-@keyframes sail-small {
-  from {
-    transform: translateX(-60px);
-  }
-  to {
-    transform: translateX(640px);
-  }
-}
-.drift-birds {
-  animation: drift 55s linear infinite;
-}
-.drift-birds.slow {
-  animation: drift-small 28s linear infinite;
-}
-@keyframes drift {
-  from {
-    transform: translateX(1000px);
-  }
-  to {
-    transform: translateX(1760px);
-  }
-}
-@keyframes drift-small {
-  from {
-    transform: translateX(-100px);
-  }
-  to {
-    transform: translateX(680px);
-  }
-}
-.flap {
-  transform-origin: center;
-  animation: flap 0.8s ease-in-out var(--d, 0s) infinite alternate;
-}
-@keyframes flap {
-  to {
-    transform: scaleY(0.55);
-  }
-}
-.flow {
-  animation: flow 14s linear infinite;
-}
-.vignette .flow {
-  animation-name: flow-small;
-  animation-duration: 9s;
-}
-@keyframes flow {
-  to {
-    transform: translateX(-400px);
-  }
-}
-@keyframes flow-small {
-  to {
-    transform: translateX(-200px);
-  }
-}
-.steam path {
-  transform-origin: 50% 100%;
-  animation: steam 2.4s ease-out var(--d, 0s) infinite;
+.egg-jebena.play .steam {
+  animation: steam 0.9s ease-out 3;
 }
 @keyframes steam {
   from {
@@ -784,64 +1048,9 @@ html[dir="rtl"] .hero-note {
     opacity: 1;
   }
   to {
-    transform: translateY(-12px);
+    transform: translateY(-14px);
     opacity: 0;
   }
-}
-.twinkle {
-  transform-origin: center;
-  animation: twinkle 3s ease-in-out var(--d, 0s) infinite;
-}
-@keyframes twinkle {
-  50% {
-    transform: scale(0.4);
-    opacity: 0.3;
-  }
-}
-.swing {
-  transform-origin: 50% 0;
-  animation: swing 3.6s ease-in-out var(--d, 0s) infinite alternate;
-}
-@keyframes swing {
-  from {
-    transform: rotate(-4deg);
-  }
-  to {
-    transform: rotate(4deg);
-  }
-}
-.float {
-  animation: float 7s ease-in-out var(--d, 0s) infinite;
-}
-@keyframes float {
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Easter eggs ------------------------------------------------------------- */
-.egg {
-  cursor: pointer;
-}
-.egg-felucca.play .bob {
-  animation: hop 0.7s ease-out 2;
-}
-@keyframes hop {
-  40% {
-    transform: translateY(-16px) rotate(-8deg);
-  }
-}
-.egg-sun.play .sun-halo {
-  animation: halo 1.4s ease-out 2;
-}
-@keyframes halo {
-  50% {
-    transform: scale(1.35);
-    opacity: 0.7;
-  }
-}
-.egg-jebena.play .steam path {
-  animation-duration: 0.8s;
 }
 
 /* Section edges shaped like the Nile */
@@ -866,18 +1075,8 @@ html[dir="rtl"] .hero-note {
 }
 .wave-edge svg {
   display: block;
-  width: 200%;
-  max-width: none;
+  width: 100%;
   height: 100%;
-  animation: wave 40s linear infinite;
-}
-.wave-edge.bottom svg {
-  animation-direction: reverse;
-}
-@keyframes wave {
-  to {
-    transform: translateX(-50%);
-  }
 }
 
 /* A felucca sails along the header as you read */
@@ -939,27 +1138,6 @@ html[dir="rtl"] .voyage svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rise,
-  .rise-sun,
-  .sun-halo,
-  .sway,
-  .bob,
-  .flap,
-  .flow,
-  .steam path,
-  .twinkle,
-  .swing,
-  .float,
-  .drift-birds,
-  .sail-back,
-  .wave-edge svg,
-  .egg.play * {
-    animation: none !important;
-  }
-  .sail-across {
-    animation: none;
-    transform: translateX(560px);
-  }
   .js .reveal {
     opacity: 1;
     transform: none;
@@ -1181,10 +1359,12 @@ html[dir="rtl"] .voyage svg {
   justify-content: center;
   aspect-ratio: 16 / 9;
   padding: 24px;
-  overflow: hidden;
-  background: var(--maroon);
-  color: var(--on-dark);
   text-align: center;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
+}
+.poster > span,
+.poster > b {
+  z-index: 2;
 }
 .poster span {
   position: relative;
@@ -1206,13 +1386,6 @@ html[lang="ar"] .poster b {
   inset: 0;
   width: 100%;
   height: 100%;
-}
-.poster-bbq {
-  background: #d6a66d;
-  color: #43301f;
-}
-.poster-film {
-  background: var(--green);
 }
 
 .empty-state {
@@ -1731,69 +1904,16 @@ html[lang] .team-card h2 {
   }
 }
 
-/* Pause / play control for all decorative motion (WCAG 2.2.2). */
-.motion-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgb(249 245 236 / 0.85);
-  color: var(--ink);
-  font: 500 14px/1 var(--font-sans);
-  cursor: pointer;
-}
-html[lang="ar"] .motion-toggle {
-  font-family: var(--font-arabic);
-}
-.motion-toggle:hover {
-  background: var(--cream);
-  border-color: var(--maroon);
-}
-.motion-toggle svg {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
-}
-.motion-toggle .icon-play,
-.motion-toggle[aria-pressed="true"] .icon-pause {
-  display: none;
-}
-.motion-toggle[aria-pressed="true"] .icon-play {
-  display: inline;
-}
-.hero-controls {
-  position: absolute;
-  inset-inline-end: var(--gutter);
-  bottom: 14px;
-  z-index: 3;
-}
-.footer-bottom {
-  align-items: center;
-}
-/* No point offering a pause button when nothing moves. */
 @media (prefers-reduced-motion: reduce) {
-  .motion-toggle {
+  .layer,
+  .rise-sun,
+  .egg.play * {
+    animation: none !important;
+  }
+  .birds {
     display: none;
   }
-}
-html:not(.js) .motion-toggle {
-  display: none;
-}
-/* Paused by the visitor, or scrolled out of view (saves battery). */
-.motion-paused *,
-.offscreen,
-.offscreen * {
-  animation-play-state: paused !important;
-}
-/* Intro animations would freeze on their invisible first frame, so skip them instead. */
-.motion-paused .rise,
-.motion-paused .rise-sun {
-  animation: none !important;
-}
-.motion-paused .wave-edge svg,
-.motion-paused .ticker-track {
-  animation-play-state: paused !important;
+  .scene {
+    transition: none;
+  }
 }

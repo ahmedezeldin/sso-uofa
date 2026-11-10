@@ -46,9 +46,9 @@ Put portraits in `src/assets/team/` (portrait orientation, about 800×1000, JPEG
 
 ### Sudanese touches
 
-The illustration is a kit of parts in [`src/art.mjs`](src/art.mjs) (sun, Meroë pyramids, doum palms, the Nile, felucca, jebena, textiles) reused across the site: the home landscape, a small scene in each page header, the footer skyline, the felucca that sails along the header as you scroll, and the Nile-wave section edges. All animation stops for visitors who prefer reduced motion.
+The illustration is a kit of parts in [`src/art.mjs`](src/art.mjs): Jebel Barkal, the Meroë pyramids, doum palms, the Nile with a felucca, papyrus and a jebena on a rug. Scenes never hard-code colours; they read CSS variables that `site.css` defines for four times of day (`data-phase` = dawn, day, dusk or night). The home page follows Edmonton's real sunrise and sunset; each inner page has its own fixed time of day (Resources is night, for prayer times). Following accessibility guidance, nothing loops: scenes assemble once, then move only with scrolling or clicks, and visitors who prefer reduced motion get the finished scene.
 
-There are a few easter eggs to keep: click the jebena (on the picnic rug), the sun or the felucca in the home landscape; type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
+There are a few easter eggs to keep: click the jebena (on the picnic rug) or the felucca in the home landscape, or click the sun or moon to move through the times of day; type "shai" or "sudan" anywhere; the footer shows a random Sudanese saying (`proverbs` in `content.mjs`) and says Jumu‘ah Mubarak on Fridays. The words in the scrolling band are `tickerWords`.
 
 ## Running it locally
 

@@ -11,7 +11,7 @@ import {
   proverbs,
   tickerWords,
 } from "./content.mjs";
-import { heroScene, vignette, skyline, waveEdge, voyage, brewing } from "./art.mjs";
+import { heroScene, horizon, pagePhases, posterArt, posterPhases, skyline, waveEdge, voyage, brewing } from "./art.mjs";
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -36,6 +36,11 @@ const navItems = ["events", "guide", "resources", "team", "contact"];
 // ---------------------------------------------------------------------------
 const external = 'target="_blank" rel="noopener"';
 
+// Picks the hero's time of day from Edmonton's actual sunrise and sunset (NOAA's approximation).
+// It runs inline at the top of the hero so the right sky is there on first paint; site.js
+// reuses window.ssoSkyPhase for the sun/moon easter egg and to follow the day as it passes.
+const skyScript = `(function(s){function p(d){d=d||new Date();var r=Math.PI/180,lat=53.5461,lng=-113.4938,y=d.getUTCFullYear(),n=Math.floor((Date.UTC(y,d.getUTCMonth(),d.getUTCDate())-Date.UTC(y,0,0))/864e5),g=2*Math.PI/365*(n-1),eq=229.18*(7.5e-5+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g)),de=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+9.07e-4*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g),ha=Math.acos(Math.min(1,Math.max(-1,Math.cos(90.833*r)/(Math.cos(lat*r)*Math.cos(de))-Math.tan(lat*r)*Math.tan(de))))/r,f=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Edmonton",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(d).split(":"),loc=+f[0]*60+ +f[1],utc=d.getUTCHours()*60+d.getUTCMinutes(),off=((loc-utc+2160)%1440)-720,rise=720-4*(lng+ha)-eq+off,set=720-4*(lng-ha)-eq+off;if(loc<rise-50||loc>set+50)return"night";if(loc<rise+60)return"dawn";if(loc>set-70)return"dusk";return"day"}window.ssoSkyPhase=p;s.dataset.phase=p()})(document.currentScript.parentElement)`;
+
 function arrow(c) {
   return `<span class="arrow" aria-hidden="true">${c.lang === "ar" ? "←" : "→"}</span>`;
 }
@@ -52,7 +57,8 @@ function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
 }
 // Inner-page header band; `scene` picks the small animated illustration on its end side (see art.mjs).
 function pageHead(c, { kicker, title, intro, scene }) {
-  return `<div class="page-head"><div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${scene ? vignette(scene) : ""}</div>`;
+  const phase = pagePhases[scene] || "day";
+  return `<div class="page-head scene" data-phase="${phase}"><div class="wrap">${sectionHead(c, { kicker, title, intro, level: 1 })}</div>${scene ? horizon(scene) : ""}</div>`;
 }
 
 export function formatDate(c, iso, opts = { year: "numeric", month: "long", day: "numeric" }) {
@@ -102,6 +108,12 @@ export function layout(c, key, main) {
 <script src="${c.asset("site.js")}" defer></script>
 <script type="application/json" id="egg-messages">${JSON.stringify({
     shai: c.tr("Shai with milk or without? (With. Obviously.)", "شاي بلبن ولا سادة؟ (بلبن طبعاً)"),
+    phases: {
+      dawn: c.tr("Fajr light over Meroë.", "نور الفجر فوق مروي."),
+      day: c.tr("Midday sun. Time for shade and shai.", "شمس الضهر… وقت الضل والشاي."),
+      dusk: c.tr("Maghrib over the Nile.", "المغرب على النيل."),
+      night: c.tr("A crescent over the pyramids. Goodnight from SSO.", "هلال فوق الأهرامات. تصبحوا على خير."),
+    },
     sudan: c.tr("السودان في القلب · Sudan, always in our hearts.", "السودان في القلب."),
   }).replace(/</g, "\\u003c")}</script>
 </head>
@@ -151,7 +163,6 @@ ${main}
   </div>
   <div class="wrap footer-bottom">
     <p>${c.tr("We acknowledge that Edmonton is on Treaty 6 territory and the Métis homeland.", "نقر بأن إدمونتون تقع على أراضي المعاهدة السادسة وموطن شعب الميتي.")}</p>
-    <button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false" data-label-pause="${c.tr("Pause animations", "إيقاف الحركة")}" data-label-play="${c.tr("Play animations", "تشغيل الحركة")}"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="icon-pause" d="M4 3h3v10H4zM9 3h3v10H9z"/><path class="icon-play" d="M4 2.5v11l9-5.5z"/></svg><span>${c.tr("Pause animations", "إيقاف الحركة")}</span></button>
     <p><span class="friday" hidden>${c.tr("Jumu‘ah Mubarak", "جمعة مباركة")} · </span>© ${c.year} SSO UofA · ${c.tr("From Sudan, with love.", "من السودان، بكل حب.")}</p>
   </div>
 </footer>
@@ -163,22 +174,6 @@ ${main}
 // ---------------------------------------------------------------------------
 // Events
 // ---------------------------------------------------------------------------
-// Decorative artwork behind each event poster's title.
-function posterArt(style) {
-  const art = {
-    nile: `<circle cx="318" cy="62" r="30" fill="#e6c9a7" opacity=".22"/>
-      <g fill="#e6c9a7" opacity=".16"><path d="M18 190 52 64l34 126Z"/><path d="M70 190 96 96l26 94Z"/><path d="M300 190l26-90 26 90Z"/><path d="M340 190l20-66 20 66Z"/></g>
-      <g fill="none" stroke="#7fae9e" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M-10 200q25-10 50 0t50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0"/><path d="M-10 214q25-10 50 0t50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0" opacity=".6"/></g>`,
-    bbq: `<g fill="none" stroke="#9e6647" stroke-width="2" opacity=".45"><path d="M40 20 80 60 40 100 0 60Z"/><path d="M40 40 60 60 40 80 20 60Z"/><path d="M360 125l40 40-40 40-40-40Z"/><path d="M360 145l20 20-20 20-20-20Z"/></g>
-      <g fill="#b4512f" opacity=".5"><circle cx="110" cy="190" r="4"/><circle cx="300" cy="40" r="3"/><circle cx="330" cy="70" r="5"/><circle cx="80" cy="150" r="3"/><circle cx="290" cy="190" r="3"/></g>
-      <path d="M0 225h400" stroke="#9e6647" stroke-width="10" stroke-dasharray="20 10" opacity=".35"/>`,
-    film: `<g transform="rotate(-14 200 112)" opacity=".28"><rect x="-40" y="150" width="480" height="58" fill="#1f3a2d"/>
-      <g fill="#e6c9a7">${Array.from({ length: 16 }, (_, i) => `<rect x="${-30 + i * 30}" y="156" width="14" height="9" rx="2"/><rect x="${-30 + i * 30}" y="193" width="14" height="9" rx="2"/>`).join("")}</g></g>
-      <circle cx="350" cy="50" r="26" fill="none" stroke="#e6c9a7" stroke-width="3" opacity=".3"/><circle cx="350" cy="50" r="6" fill="#e6c9a7" opacity=".3"/>`,
-  };
-  return `<svg class="poster-art" viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${art[style] || art.nile}</svg>`;
-}
-
 function eventCard(c, e, { headingLevel = 3 } = {}) {
   const h = `h${headingLevel}`;
   const dateLabel = e.date ? formatDate(c, e.date) : c.tr("Instagram highlight", "قصص مميزة");
@@ -188,7 +183,7 @@ function eventCard(c, e, { headingLevel = 3 } = {}) {
     e.access && [c.tr("Accessibility", "إمكانية الوصول"), c.t(e.access)],
   ].filter(Boolean);
   return `<article class="event-card"${e.date ? ` data-event-date="${e.date}"` : ""}>
-  <div class="poster poster-${e.posterStyle}" aria-hidden="true">${posterArt(e.posterStyle)}<span>SSO UofA</span><b>${c.t(e.poster)}</b></div>
+  <div class="poster scene poster-${e.posterStyle}" data-phase="${posterPhases[e.posterStyle] || "dusk"}" aria-hidden="true">${posterArt(e.posterStyle)}<span>SSO UofA</span><b>${c.t(e.poster)}</b></div>
   <div class="event-body">
     <p class="event-meta"><span class="tag">${c.t(eventCategories[e.category])}</span>${e.date ? `<time datetime="${e.date}">${dateLabel}</time>` : `<span>${dateLabel}</span>`}</p>
     <${h}>${c.t(e.title)}</${h}>
@@ -269,10 +264,11 @@ function homePage(c) {
   const { upcoming, past } = eventLists(c, c.today);
   const recent = past.filter((e) => e.date).slice(0, 3);
   const star = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`;
-  return `<section class="hero"
+  return `<section class="hero scene" data-phase="day"
   data-egg-jebena="${esc(c.tr("The jebena’s always on. Come for coffee, leave with friends.", "الجبنة دايماً شغالة. تعال اشرب جبنة وارجع بأصحاب."))}"
   data-egg-sun="${esc(c.tr("We brought the Khartoum sun with us. Edmonton winter doesn’t scare us.", "جبنا شمس الخرطوم معانا… شتاء إدمنتون ما بيخوفنا."))}"
   data-egg-felucca="${esc(c.tr("All aboard! Next stop: Al-Mogran, where the Blue and White Nile meet.", "اركب المركب! المحطة الجاية المقرن، ملتقى النيلين."))}">
+  <script>${skyScript}</script>
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <p class="eyebrow">${c.tr("University of Alberta · Edmonton", "جامعة ألبرتا · إدمونتون")}</p>
@@ -286,7 +282,6 @@ function homePage(c) {
     <p class="hero-note" lang="ar" dir="rtl" aria-hidden="true">أهلاً بيك</p>
   </div>
   ${heroScene()}
-  <div class="hero-controls"><button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false" data-label-pause="${c.tr("Pause animations", "إيقاف الحركة")}" data-label-play="${c.tr("Play animations", "تشغيل الحركة")}"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="icon-pause" d="M4 3h3v10H4zM9 3h3v10H9z"/><path class="icon-play" d="M4 2.5v11l9-5.5z"/></svg><span>${c.tr("Pause animations", "إيقاف الحركة")}</span></button></div>
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
   .map(() => `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`)
