@@ -11,6 +11,7 @@ import {
   proverbs,
   tickerWords,
 } from "./content.mjs";
+import { skyPhase } from "./sky.mjs";
 import { heroScene, horizon, pagePhases, posterArt, posterPhases, skyline, waveEdge, voyage, brewing } from "./art.mjs";
 
 export const esc = (s) =>
@@ -18,12 +19,51 @@ export const esc = (s) =>
 
 // Pages that exist in both languages. `path` is relative to the language root.
 export const pages = {
-  home: { path: "", title: null, description: L2("Sudanese Students Organization at the University of Alberta: culture, connection and community.", "منظمة الطلاب السودانيين في جامعة ألبرتا: ثقافة وتواصل ومجتمع.") },
-  events: { path: "events.html", title: L2("Events", "الفعاليات"), description: L2("Upcoming SSO gatherings, past highlights and a calendar you can subscribe to.", "لقاءات المنظمة القادمة واللقطات السابقة وتقويم يمكنك الاشتراك فيه.") },
-  guide: { path: "guide.html", title: L2("New here?", "جديد هنا؟"), description: L2("A few starting points for your first weeks at the University of Alberta.", "نقاط بداية لأسابيعك الأولى في جامعة ألبرتا.") },
-  resources: { path: "resources.html", title: L2("Student resources", "موارد الطلاب"), description: L2("Campus prayer times and the university tools you use every week.", "مواقيت الصلاة في الجامعة والأدوات الجامعية التي تستخدمها كل أسبوع.") },
-  team: { path: "team.html", title: L2("Our team", "فريقنا"), description: L2("Meet the SSO UofA executive team.", "تعرّف على الفريق التنفيذي للمنظمة.") },
-  contact: { path: "contact.html", title: L2("Get involved", "شارك معنا"), description: L2("Join SSO, volunteer, suggest a collaboration or send the team a message.", "انضم للمنظمة أو تطوّع أو اقترح تعاوناً أو راسل الفريق.") },
+  home: {
+    path: "",
+    title: null,
+    description: L2(
+      "Sudanese Students Organization at the University of Alberta: culture, connection and community.",
+      "منظمة الطلاب السودانيين في جامعة ألبرتا: ثقافة وتواصل ومجتمع.",
+    ),
+  },
+  events: {
+    path: "events.html",
+    title: L2("Events", "الفعاليات"),
+    description: L2(
+      "Upcoming SSO gatherings, past highlights and a calendar you can subscribe to.",
+      "لقاءات المنظمة القادمة واللقطات السابقة وتقويم يمكنك الاشتراك فيه.",
+    ),
+  },
+  guide: {
+    path: "guide.html",
+    title: L2("New here?", "جديد هنا؟"),
+    description: L2(
+      "A few starting points for your first weeks at the University of Alberta.",
+      "نقاط بداية لأسابيعك الأولى في جامعة ألبرتا.",
+    ),
+  },
+  resources: {
+    path: "resources.html",
+    title: L2("Student resources", "موارد الطلاب"),
+    description: L2(
+      "Campus prayer times and the university tools you use every week.",
+      "مواقيت الصلاة في الجامعة والأدوات الجامعية التي تستخدمها كل أسبوع.",
+    ),
+  },
+  team: {
+    path: "team.html",
+    title: L2("Our team", "فريقنا"),
+    description: L2("Meet the SSO UofA executive team.", "تعرّف على الفريق التنفيذي للمنظمة."),
+  },
+  contact: {
+    path: "contact.html",
+    title: L2("Get involved", "شارك معنا"),
+    description: L2(
+      "Join SSO, volunteer, suggest a collaboration or send the team a message.",
+      "انضم للمنظمة أو تطوّع أو اقترح تعاوناً أو راسل الفريق.",
+    ),
+  },
 };
 function L2(en, ar) {
   return { en, ar };
@@ -36,10 +76,9 @@ const navItems = ["events", "guide", "resources", "team", "contact"];
 // ---------------------------------------------------------------------------
 const external = 'target="_blank" rel="noopener"';
 
-// Picks the hero's time of day from Edmonton's actual sunrise and sunset (NOAA's approximation).
-// It runs inline at the top of the hero so the right sky is there on first paint; site.js
-// reuses window.ssoSkyPhase for the sun/moon easter egg and to follow the day as it passes.
-const skyScript = `(function(s){function p(d){d=d||new Date();var r=Math.PI/180,lat=53.5461,lng=-113.4938,y=d.getUTCFullYear(),n=Math.floor((Date.UTC(y,d.getUTCMonth(),d.getUTCDate())-Date.UTC(y,0,0))/864e5),g=2*Math.PI/365*(n-1),eq=229.18*(7.5e-5+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g)),de=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+9.07e-4*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g),ha=Math.acos(Math.min(1,Math.max(-1,Math.cos(90.833*r)/(Math.cos(lat*r)*Math.cos(de))-Math.tan(lat*r)*Math.tan(de))))/r,f=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Edmonton",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(d).split(":"),loc=+f[0]*60+ +f[1],utc=d.getUTCHours()*60+d.getUTCMinutes(),off=((loc-utc+2160)%1440)-720,rise=720-4*(lng+ha)-eq+off,set=720-4*(lng-ha)-eq+off;if(loc<rise-50||loc>set+50)return"night";if(loc<rise+60)return"dawn";if(loc>set-70)return"dusk";return"day"}window.ssoSkyPhase=p;s.dataset.phase=p()})(document.currentScript.parentElement)`;
+// The sky phase is picked inline at the top of the hero so the right sky is there on first
+// paint; site.js reuses window.ssoSkyPhase for the sun/moon easter egg.
+const skyScript = `window.ssoSkyPhase = ${skyPhase.toString()};\ndocument.currentScript.parentElement.dataset.phase = window.ssoSkyPhase();`;
 
 function arrow(c) {
   return `<span class="arrow" aria-hidden="true">${c.lang === "ar" ? "←" : "→"}</span>`;
@@ -50,7 +89,7 @@ function extIcon(c) {
 }
 function sectionHead(c, { kicker, title, intro, id, level = 2 }) {
   return `<div class="section-head">
-  <p class="eyebrow">${kicker}</p>
+  ${kicker ? `<p class="eyebrow">${kicker}</p>` : ""}
   <h${level}${id ? ` id="${id}"` : ""}>${title}</h${level}>
   ${intro ? `<p class="intro">${intro}</p>` : ""}
 </div>`;
@@ -70,7 +109,12 @@ export function formatDate(c, iso, opts = { year: "numeric", month: "long", day:
 // ---------------------------------------------------------------------------
 export function layout(c, key, main) {
   const page = pages[key];
-  const title = page.title ? `${c.t(page.title)} · SSO UofA` : c.tr("SSO UofA · Sudanese Students Organization at the University of Alberta", "منظمة الطلاب السودانيين · جامعة ألبرتا");
+  const title = page.title
+    ? `${c.t(page.title)} · SSO UofA`
+    : c.tr(
+        "SSO UofA · Sudanese Students Organization at the University of Alberta",
+        "منظمة الطلاب السودانيين · جامعة ألبرتا",
+      );
   const other = c.lang === "en" ? "ar" : "en";
   const langSwitch = c.urlFor(key, other);
   const canonical = site.url + c.urlFor(key).slice(site.basePath.length - 1);
@@ -98,7 +142,7 @@ export function layout(c, key, main) {
 <link rel="apple-touch-icon" href="${c.asset("club-logo.jpg")}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="${c.asset("site.css")}">
 <script>document.documentElement.classList.add("js");${
     c.lang === "en"
@@ -222,7 +266,6 @@ function subscribePanel(c) {
   const outlook = `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(feed)}&name=${encodeURIComponent("SSO UofA Events")}`;
   return `<section class="subscribe" id="subscribe" aria-labelledby="subscribe-title">
   <div>
-    <p class="eyebrow">${c.tr("Subscribe once, stay in the loop", "اشترك مرة وخليك على اطلاع")}</p>
     <h2 id="subscribe-title">${c.tr("Put SSO in your calendar.", "خلي المنظمة في تقويمك.")}</h2>
     <p>${c.tr("New events and schedule changes show up in your calendar app automatically. How often it refreshes depends on the app.", "تظهر الفعاليات الجديدة وتغييرات المواعيد في تطبيق التقويم تلقائياً. تعتمد سرعة التحديث على التطبيق.")}</p>
   </div>
@@ -240,9 +283,11 @@ function eventsPage(c) {
   const { upcoming, past } = eventLists(c, c.today);
   return `${pageHead(c, {
     scene: "events",
-    kicker: c.tr("Around the community", "في مجتمعنا"),
-    title: c.tr("Good things happen when we gather.", "الحاجات الحلوة بتبدأ باللمة."),
-    intro: c.tr("What’s coming up, how to never miss it, and moments from past gatherings.", "الفعاليات القادمة، وكيف لا تفوتك، ولحظات من لقاءات سابقة."),
+    title: c.tr("What’s coming up", "شنو الجاي؟"),
+    intro: c.tr(
+      "What’s coming up, how to never miss it, and moments from past gatherings.",
+      "الفعاليات القادمة، وكيف لا تفوتك، ولحظات من لقاءات سابقة.",
+    ),
   })}
 <section class="wrap section" aria-labelledby="upcoming-title">
   <h2 id="upcoming-title" class="list-title">${c.tr("Upcoming", "القادمة")}</h2>
@@ -253,7 +298,6 @@ function eventsPage(c) {
 <section class="wrap section" id="past" aria-labelledby="past-title">
   <h2 id="past-title" class="list-title">${c.tr("Past events & highlights", "فعاليات سابقة ولقطات")}</h2>
   <div class="event-grid" data-event-list="past">${past.map((e) => eventCard(c, e)).join("")}</div>
-  <p class="fine-print">${c.tr("Posters are illustrations made for this website, not official event artwork.", "الملصقات رسومات صُممت لهذا الموقع وليست ملصقات رسمية للفعاليات.")}</p>
 </section>`;
 }
 
@@ -273,7 +317,7 @@ function homePage(c) {
     <div class="hero-copy">
       <p class="eyebrow">${c.tr("University of Alberta · Edmonton", "جامعة ألبرتا · إدمونتون")}</p>
       <h1>${c.tr("Wherever we gather,<br>it’s <em>home.</em>", "وين ما اتلمّينا،<br>دا <em>البيت.</em>")}</h1>
-      <p class="lead">${c.tr("Culture that connects us and friendships that stay with us. A home on campus for Sudanese students, and for everyone curious to share in it.", "ثقافة تجمعنا وصداقات تبقى معنا. بيت في الجامعة للطلاب السودانيين ولكل من يرغب في مشاركتنا.")}</p>
+      <p class="lead">${c.tr("We’re the Sudanese Students Organization at the University of Alberta. We run film nights, BBQs and cultural evenings, and help new students settle in. You don’t have to be Sudanese to join.", "نحن منظمة الطلاب السودانيين في جامعة ألبرتا. بننظم ليالي أفلام وشواء وأمسيات ثقافية، وبنساعد الطلاب الجدد يستقروا. ما لازم تكون سوداني عشان تنضم.")}</p>
       <p class="actions">
         <a class="button" href="${site.membership}" ${external}>${c.tr("Become a member, it’s free", "انضم للمنظمة مجاناً")}</a>
         <a class="button ghost" href="${c.urlFor("events")}">${c.tr("See what’s on", "شوف الفعاليات")}</a>
@@ -284,33 +328,41 @@ function homePage(c) {
   ${heroScene()}
 </section>
 <div class="ticker" aria-hidden="true"><div class="ticker-track" dir="ltr">${[0, 1]
-  .map(() => `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`)
-  .join("")}</div></div>
+    .map(
+      () =>
+        `<div class="ticker-set">${tickerWords.map((w) => `<span${w.lang ? ` lang="${w.lang}"` : ""}>${w.lang ? w.text : c.t(w.text)}</span>${star}`).join("")}</div>`,
+    )
+    .join("")}</div></div>
 <section class="wrap section about" aria-labelledby="about-title">
   ${sectionHead(c, {
     id: "about-title",
-    kicker: c.tr("The space between here & home", "المسافة بين هنا والبيت"),
-    title: c.tr("Different journeys. A shared table.", "رحلات مختلفة. ولمة بتجمعنا."),
-    intro: c.tr("SSO brings Sudanese culture, friendship and community to the University of Alberta, wherever your journey began.", "تجمع المنظمة الثقافة السودانية والصداقات والمجتمع في جامعة ألبرتا، مهما كانت بداية رحلتك."),
+    title: c.tr("The Sudanese community at UAlberta", "مجتمع الطلاب السودانيين في جامعة ألبرتا"),
+    intro: c.tr(
+      "Some of us grew up in Sudan, some here in Canada. What we share is a love for the food, the music and the people.",
+      "في مننا اتربى في السودان، وفي مننا اتربى هنا في كندا. البيجمعنا حبنا للأكل والموسيقى والناس.",
+    ),
   })}
   <ol class="values">
-    <li><b>${c.tr("Celebrate culture", "احتفاء بالثقافة")}</b><p>${c.tr("Our stories, music, food and the everyday things that feel like home.", "قصصنا وموسيقانا وأكلنا وتفاصيلنا اليومية التي تشبه البيت.")}</p></li>
-    <li><b>${c.tr("Make connections", "روابط وصداقات")}</b><p>${c.tr("Familiar faces, new friends, and a campus that feels a little smaller.", "وجوه مألوفة وأصدقاء جدد وجامعة تبدو أقرب.")}</p></li>
-    <li><b>${c.tr("Show up together", "مع بعض")}</b><p>${c.tr("Student-led gatherings, conversations and a hand when someone needs one.", "لقاءات ونقاشات يقودها الطلاب، ويد ممدودة لمن يحتاجها.")}</p></li>
+    <li><b>${c.tr("Film nights and cultural evenings", "ليالي أفلام وأمسيات ثقافية")}</b><p>${c.tr("Sudanese films, music and stories, usually with food.", "أفلام وموسيقى وحكايات سودانية، وغالباً في أكل.")}</p></li>
+    <li><b>${c.tr("A first friend on campus", "أول صاحب في الجامعة")}</b><p>${c.tr("If you’ve just arrived, we’ll help you find your way around and introduce you to people.", "لو لسه واصل، بنساعدك تعرف الجامعة وبنعرّفك على الناس.")}</p></li>
+    <li><b>${c.tr("Community and solidarity events", "فعاليات مجتمعية وتضامنية")}</b><p>${c.tr("BBQs and get-togethers with other campus groups.", "شواء ولقاءات مع مجموعات جامعية تانية.")}</p></li>
   </ol>
 </section>
 <section class="band" aria-labelledby="next-title">
   ${waveEdge("var(--cream)", "top")}
   <div class="wrap section">
     <div class="section-row">
-      ${sectionHead(c, { id: "next-title", kicker: c.tr("Next on the calendar", "القادم في التقويم"), title: c.tr("Come to a gathering.", "تعال للمة.") })}
+      ${sectionHead(c, { id: "next-title", title: c.tr("Coming up", "القادم") })}
       <a class="text-link" href="${c.urlFor("events")}">${c.tr("All events", "كل الفعاليات")} ${arrow(c)}</a>
     </div>
-    <div class="event-grid" data-event-list="upcoming">${upcoming.slice(0, 3).map((e) => eventCard(c, e)).join("")}</div>
+    <div class="event-grid" data-event-list="upcoming">${upcoming
+      .slice(0, 3)
+      .map((e) => eventCard(c, e))
+      .join("")}</div>
     <div data-upcoming-empty${upcoming.length ? " hidden" : ""}>
       <div class="next-note">
         ${brewing()}
-        <p><b>${c.tr("No new dates yet. The shai’s still brewing.", "لسه ما في مواعيد جديدة. الشاي لسه بيتعمل.")}</b> ${c.tr("Subscribe to the club calendar and new gatherings appear in yours automatically. Until then, here’s what we’ve been up to.", "اشترك في تقويم المنظمة وستظهر اللقاءات الجديدة في تقويمك تلقائياً. وإلى ذلك الحين، هذا ما كنا نفعله.")}</p>
+        <p><b>${c.tr("Nothing new on the calendar yet.", "ما في مواعيد جديدة حالياً.")}</b> ${c.tr("Subscribe to the club calendar and new gatherings appear in yours automatically. Until then, here’s what we’ve been up to.", "اشترك في تقويم المنظمة وستظهر اللقاءات الجديدة في تقويمك تلقائياً. وإلى ذلك الحين، هذا ما كنا نفعله.")}</p>
         <a class="button small" href="${c.urlFor("events")}#subscribe">${c.tr("Subscribe", "اشترك")}</a>
       </div>
       <div class="event-grid" data-event-list="recent">${recent.map((e) => eventCard(c, e)).join("")}</div>
@@ -322,8 +374,7 @@ function homePage(c) {
   ${waveEdge("var(--cream)", "bottom")}
   <div class="wrap join-grid">
     <div>
-      <p class="eyebrow">${c.tr("There’s room for you here", "في مكان ليك هنا")}</p>
-      <h2 id="join-title">${c.tr("Come for the culture.<br>Stay for the people.", "تعال عشان الثقافة.<br>خليك عشان الناس.")}</h2>
+      <h2 id="join-title">${c.tr("Everyone’s welcome, Sudanese or not.", "الكل مرحّب بيهو، سوداني أو ما سوداني.")}</h2>
       <p>${c.tr("Membership is free and open to everyone.", "العضوية مجانية ومفتوحة للجميع.")}</p>
     </div>
     <ol class="join-ways">
@@ -334,7 +385,7 @@ function homePage(c) {
   </div>
 </section>
 <section class="wrap section faq" aria-labelledby="faq-title">
-  ${sectionHead(c, { id: "faq-title", kicker: c.tr("FAQ", "أسئلة شائعة"), title: c.tr("Before you say hello.", "قبل ما تقول مرحب.") })}
+  ${sectionHead(c, { id: "faq-title", title: c.tr("Questions people ask us", "أسئلة بتتكرر") })}
   <div class="faq-list">${faqs.map((f) => `<details><summary>${c.t(f.q)}</summary><p>${c.t(f.a)}</p></details>`).join("")}</div>
 </section>`;
 }
@@ -342,11 +393,10 @@ function homePage(c) {
 // ---------------------------------------------------------------------------
 // New here?
 // ---------------------------------------------------------------------------
-function linkCards(c, list, startAt = 1) {
+function linkCards(c, list) {
   return list
     .map(
       (r, i) => `<li><a class="link-card" href="${r.url}" ${external}>
-  <span class="num">${String(i + startAt).padStart(2, "0")}</span>
   <b>${c.t(r.title)} ${extIcon(c)}</b>
   <span>${c.t(r.desc)}</span>
 </a></li>`,
@@ -357,9 +407,11 @@ function linkCards(c, list, startAt = 1) {
 function guidePage(c) {
   return `${pageHead(c, {
     scene: "guide",
-    kicker: c.tr("Your first few weeks", "أسابيعك الأولى"),
-    title: c.tr("New here? You belong.", "جديد هنا؟ في مكان ليك."),
-    intro: c.tr("You don’t need to know anyone already. Here’s how to find your feet, and your people.", "لا تحتاج لمعرفة أحد مسبقاً. هكذا تجد طريقك وناسك."),
+    title: c.tr("New to UAlberta?", "جديد في جامعة ألبرتا؟"),
+    intro: c.tr(
+      "You don’t need to know anyone already. Here’s how to find your feet, and your people.",
+      "لا تحتاج لمعرفة أحد مسبقاً. هكذا تجد طريقك وناسك.",
+    ),
   })}
 <section class="wrap section" aria-labelledby="steps-title">
   <h2 id="steps-title" class="list-title">${c.tr("Three easy first steps", "ثلاث خطوات أولى سهلة")}</h2>
@@ -373,9 +425,9 @@ function guidePage(c) {
   <h2 id="campus-title" class="list-title">${c.tr("Getting around campus", "التنقل في الجامعة")}</h2>
   <ul class="link-grid">
     ${linkCards(c, newStudentLinks)}
-    <li><a class="link-card" href="${c.urlFor("resources")}"><span class="num">${String(newStudentLinks.length + 1).padStart(2, "0")}</span><b>${c.tr("Prayer times & campus tools", "مواقيت الصلاة وأدوات الجامعة")}</b><span>${c.tr("Today’s prayer times, Bear Tracks, Canvas and key dates.", "مواقيت الصلاة اليوم وبير تراكس وكانفاس والمواعيد المهمة.")}</span></a></li>
+    <li><a class="link-card" href="${c.urlFor("resources")}"><b>${c.tr("Prayer times & campus tools", "مواقيت الصلاة وأدوات الجامعة")}</b><span>${c.tr("Today’s prayer times, Bear Tracks, Canvas and key dates.", "مواقيت الصلاة اليوم وبير تراكس وكانفاس والمواعيد المهمة.")}</span></a></li>
   </ul>
-  <p class="fine-print">${c.tr("Links reviewed 9 October 2026. These are independent university services, not SSO partnerships.", "رُوجعت الروابط في ٩ أكتوبر ٢٠٢٦. هذه خدمات جامعية مستقلة وليست شراكات للمنظمة.")}</p>
+  <p class="fine-print">${c.tr("These are university services, not SSO partnerships.", "هذه خدمات جامعية وليست شراكات للمنظمة.")}</p>
 </section>`;
 }
 
@@ -392,16 +444,18 @@ function resourcesPage(c) {
   ];
   return `${pageHead(c, {
     scene: "resources",
-    kicker: c.tr("Campus, made easier", "الجامعة أسهل"),
-    title: c.tr("Student resources.", "موارد الطلاب."),
-    intro: c.tr("Today’s prayer times and the university tools you’ll use every week.", "مواقيت الصلاة اليوم والأدوات الجامعية التي تستخدمها كل أسبوع."),
+    title: c.tr("Student resources", "موارد الطلاب"),
+    intro: c.tr(
+      "Today’s prayer times and the university tools you’ll use every week.",
+      "مواقيت الصلاة اليوم والأدوات الجامعية التي تستخدمها كل أسبوع.",
+    ),
   })}
 <section class="wrap section prayer" id="prayer" aria-labelledby="prayer-title" data-prayer data-locale="${c.locale}"
   data-msg-loading="${c.tr("Loading today’s times…", "جارٍ تحميل مواقيت اليوم…")}"
   data-msg-error="${c.tr("Prayer times couldn’t be loaded right now.", "تعذر تحميل مواقيت الصلاة الآن.")}"
   data-msg-next="${c.tr("Next", "التالية")}">
   <div class="section-row">
-    <div class="section-head"><p class="eyebrow">${c.tr("A moment for prayer", "وقت للصلاة")}</p><h2 id="prayer-title">${c.tr("Prayer times · Edmonton", "مواقيت الصلاة · إدمونتون")}</h2></div>
+    <div class="section-head"><h2 id="prayer-title">${c.tr("Prayer times · Edmonton", "مواقيت الصلاة · إدمونتون")}</h2></div>
     <a class="text-link" href="https://www.msauofa.ca/" ${external}>${c.tr("Source: MSA UofA", "المصدر: جمعية الطلاب المسلمين")} ${extIcon(c)}</a>
   </div>
   <ul class="prayer-grid">${prayers.map(([k, ar]) => `<li data-prayer-key="${k}"><span>${c.tr(k, ar)}</span><b>–</b></li>`).join("")}</ul>
@@ -411,7 +465,6 @@ function resourcesPage(c) {
 <section class="wrap section" aria-labelledby="tools-title">
   <h2 id="tools-title" class="list-title">${c.tr("Everyday campus tools", "أدوات الجامعة اليومية")}</h2>
   <ul class="link-grid">${linkCards(c, campusTools)}</ul>
-  <p class="fine-print">${c.tr("Official university pages, reviewed 9 October 2026.", "صفحات رسمية للجامعة، رُوجعت في ٩ أكتوبر ٢٠٢٦.")}</p>
 </section>`;
 }
 
@@ -419,11 +472,15 @@ function resourcesPage(c) {
 // Team
 // ---------------------------------------------------------------------------
 function teamPage(c) {
-  const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("");
+  const initials = (name) =>
+    name
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("");
   return `${pageHead(c, {
     scene: "team",
-    kicker: c.tr("The people behind the community", "الناس وراء اللمة"),
-    title: c.tr("Meet the executive team.", "تعرّف على الفريق التنفيذي."),
+    title: c.tr("This year’s executive team", "الفريق التنفيذي لهذا العام"),
     intro: c.tr("The students who keep SSO running this year.", "الطلاب الذين يقودون المنظمة هذا العام."),
   })}
 <section class="wrap section">
@@ -438,7 +495,7 @@ function teamPage(c) {
       )
       .join("")}
   </ul>
-  <p class="fine-print">${c.tr("Names and roles from the club’s Rubric directory, checked 9 October 2026.", "الأسماء والمناصب من دليل المنظمة على روبرك، تم التحقق منها في ٩ أكتوبر ٢٠٢٦.")} <a href="${site.membership}" ${external}>${c.tr("View the directory", "عرض الدليل")} ${extIcon(c)}</a></p>
+  <p class="fine-print">${c.tr("From the club’s Rubric directory.", "من دليل المنظمة على روبرك.")} <a href="${site.membership}" ${external}>${c.tr("View the directory", "عرض الدليل")} ${extIcon(c)}</a></p>
 </section>`;
 }
 
@@ -447,26 +504,44 @@ function teamPage(c) {
 // ---------------------------------------------------------------------------
 function contactPage(c) {
   const topics = [
-    [c.tr("Questions", "الأسئلة"), c.tr("Anything about SSO, membership or events.", "أي شيء عن المنظمة أو العضوية أو الفعاليات.")],
-    [c.tr("Ideas & feedback", "أفكار وملاحظات"), c.tr("An event you’d love to see, or something we could do better.", "فعالية تتمنى أن تراها، أو شيء يمكننا تحسينه.")],
-    [c.tr("Partnerships", "الشراكات"), c.tr("Collaborations with other clubs, sponsors and campus groups.", "التعاون مع الأندية الأخرى والرعاة والمجموعات الجامعية.")],
-    [c.tr("Concerns", "الشكاوى"), c.tr("Something you want the executive team to hear. We treat these privately.", "شيء تريد أن يسمعه الفريق التنفيذي. نتعامل معها بخصوصية.")],
+    [
+      c.tr("Questions", "الأسئلة"),
+      c.tr("Anything about SSO, membership or events.", "أي شيء عن المنظمة أو العضوية أو الفعاليات."),
+    ],
+    [
+      c.tr("Ideas & feedback", "أفكار وملاحظات"),
+      c.tr(
+        "An event you’d love to see, or something we could do better.",
+        "فعالية تتمنى أن تراها، أو شيء يمكننا تحسينه.",
+      ),
+    ],
+    [
+      c.tr("Partnerships", "الشراكات"),
+      c.tr(
+        "Collaborations with other clubs, sponsors and campus groups.",
+        "التعاون مع الأندية الأخرى والرعاة والمجموعات الجامعية.",
+      ),
+    ],
+    [
+      c.tr("Concerns", "الشكاوى"),
+      c.tr(
+        "Something you want the executive team to hear. We treat these privately.",
+        "شيء تريد أن يسمعه الفريق التنفيذي. نتعامل معها بخصوصية.",
+      ),
+    ],
   ];
   return `${pageHead(c, {
     scene: "contact",
-    kicker: c.tr("There’s room for you here", "في مكان ليك هنا"),
-    title: c.tr("Get involved.", "شارك معنا."),
+    title: c.tr("Get involved", "شارك معنا"),
     intro: c.tr("Become a member, lend a hand, or just say hello.", "انضم للمنظمة، أو شارك بجهدك، أو قول مرحب."),
   })}
 <div class="wrap involve-grid">
   <section class="card" aria-labelledby="member-title">
-    <p class="eyebrow">01</p>
     <h2 id="member-title">${c.tr("Become a member", "انضم للمنظمة")}</h2>
     <p>${c.tr("Membership is free and open to everyone. Sign up on Rubric with your UAlberta account to hear about every gathering.", "العضوية مجانية ومفتوحة للجميع. سجّل في روبرك بحسابك الجامعي لتعرف عن كل لقاء.")}</p>
     <p class="actions"><a class="button" href="${site.membership}" ${external}>${c.tr("Join on Rubric", "انضم عبر روبرك")} ${extIcon(c)}</a></p>
   </section>
   <section class="card" id="volunteer" aria-labelledby="volunteer-title">
-    <p class="eyebrow">02</p>
     <h2 id="volunteer-title">${c.tr("Volunteer", "تطوّع")}</h2>
     <p>${c.tr("Volunteers coordinate in one WhatsApp group. Shifts are posted there, and you pick only the ones that suit you.", "يتنسق المتطوعون في مجموعة واتساب واحدة. تُنشر المهام هناك وتختار ما يناسبك فقط.")}</p>
     ${
@@ -476,7 +551,6 @@ function contactPage(c) {
     }
   </section>
   <section class="card wide" id="message" aria-labelledby="message-title">
-    <p class="eyebrow">03</p>
     <h2 id="message-title">${c.tr("Send us a message", "راسلنا")}</h2>
     <p>${c.tr("The fastest way to reach the team is a direct message on Instagram. We usually reply within a few days.", "أسرع طريقة للوصول إلى الفريق هي رسالة مباشرة على إنستغرام. نرد عادة خلال أيام.")}</p>
     <ul class="topic-list">${topics.map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("")}</ul>
@@ -484,7 +558,7 @@ function contactPage(c) {
   </section>
   ${
     site.newsletter
-      ? `<section class="card wide" aria-labelledby="news-title"><p class="eyebrow">04</p><h2 id="news-title">${c.tr("Get the newsletter", "اشترك في النشرة")}</h2><p>${c.tr("Upcoming gatherings and community news, now and then.", "اللقاءات القادمة وأخبار المجتمع بين حين وآخر.")}</p><p class="actions"><a class="button" href="${site.newsletter}" ${external}>${c.tr("Subscribe", "اشترك")} ${extIcon(c)}</a></p></section>`
+      ? `<section class="card wide" aria-labelledby="news-title"><h2 id="news-title">${c.tr("Get the newsletter", "اشترك في النشرة")}</h2><p>${c.tr("Upcoming gatherings and community news, now and then.", "اللقاءات القادمة وأخبار المجتمع بين حين وآخر.")}</p><p class="actions"><a class="button" href="${site.newsletter}" ${external}>${c.tr("Subscribe", "اشترك")} ${extIcon(c)}</a></p></section>`
       : ""
   }
 </div>`;
@@ -496,14 +570,23 @@ function contactPage(c) {
 export function notFoundPage(c) {
   return `${pageHead(c, {
     scene: "lost",
-    kicker: "404",
     title: c.tr("This page went out for ful and never came back.", "الصفحة دي مشت تجيب فول وما رجعت."),
-    intro: c.tr("The link may be old, or the page may have moved. Let’s get you back to the lamma.", "ممكن الرابط قديم أو الصفحة اتنقلت. خلينا نرجعك للمة."),
+    intro: c.tr(
+      "The link may be old, or the page may have moved. Let’s get you back to the lamma.",
+      "ممكن الرابط قديم أو الصفحة اتنقلت. خلينا نرجعك للمة.",
+    ),
   })}
 <div class="wrap section"><p class="actions"><a class="button" href="${c.urlFor("home")}">${c.tr("Back to home", "العودة للرئيسية")}</a><a class="button ghost" href="${c.urlFor("events")}">${c.tr("See events", "شوف الفعاليات")}</a></p></div>`;
 }
 
 export function renderPage(c, key) {
   const page = pages[key];
-  return { home: homePage, events: eventsPage, guide: guidePage, resources: resourcesPage, team: teamPage, contact: contactPage }[key](c);
+  return {
+    home: homePage,
+    events: eventsPage,
+    guide: guidePage,
+    resources: resourcesPage,
+    team: teamPage,
+    contact: contactPage,
+  }[key](c);
 }

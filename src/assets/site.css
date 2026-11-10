@@ -1,28 +1,27 @@
 /* SSO UofA site styles. Logical properties (inline/block) keep English and Arabic layouts mirrored. */
 
 :root {
-  --cream: #f9f5ec;
-  --sand: #f0e8da;
-  --sand-deep: #e4d8c3;
+  --cream: #fbfaf7;
+  --sand: #f1efea;
+  --sand-deep: #e2ddd3;
   --maroon: #612c32;
   --maroon-deep: #4c2227;
-  --terracotta: #b4512f;
+  --terracotta: #2d6a57;
   --gold: #e6c9a7;
   --green: #365c49;
   --ink: #2c2824;
   --muted: #675e54;
-  --line: #ddd4c4;
+  --line: #dcd7cd;
   --on-dark: #f7e9d2;
 
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-display: "DM Serif Display", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-display: "Alexandria", "IBM Plex Sans Arabic", system-ui, sans-serif;
   --font-arabic: "IBM Plex Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
 
   --wrap: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
   --section: clamp(56px, 8vw, 104px);
-  --radius: 14px;
-  --shadow: 0 1px 2px rgb(44 40 36 / 0.06), 0 8px 24px rgb(44 40 36 / 0.06);
+  --radius: 6px;
 }
 
 /* Base ------------------------------------------------------------------- */
@@ -58,16 +57,16 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   margin: 0;
   text-wrap: balance;
 }
 html[lang="ar"] :is(h1, h2, h3) {
-  font-family: var(--font-arabic);
-  font-weight: 700;
-  line-height: 1.3;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.35;
   letter-spacing: 0;
 }
 p {
@@ -95,7 +94,7 @@ input {
   border-radius: 4px;
 }
 /* On maroon sections terracotta disappears (about 1.6:1), so switch to gold. */
-:is(.join, .subscribe, .ticker, .card-dark) :focus-visible {
+:is(.join, .subscribe, .ticker) :focus-visible {
   outline-color: var(--gold);
 }
 .sr-only {
@@ -215,7 +214,7 @@ html[dir="rtl"] .ext {
 .tag {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--sand-deep);
   color: var(--maroon);
   font-size: 13px;
@@ -231,7 +230,7 @@ html[dir="rtl"] .ext {
   min-height: 48px;
   padding: 12px 22px;
   border: 2px solid var(--maroon);
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--maroon);
   color: var(--on-dark);
   font-size: 16px;
@@ -326,7 +325,7 @@ html[dir="rtl"] .ext {
 .lang-switch {
   display: block;
   padding: 8px 12px;
-  border-radius: 999px;
+  border-radius: 6px;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
@@ -366,7 +365,9 @@ html[dir="rtl"] .ext {
     height: 2px;
     background: currentColor;
     border-radius: 2px;
-    transition: transform 0.2s, opacity 0.2s;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
   }
   .menu-toggle[aria-expanded="true"] span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
@@ -771,7 +772,10 @@ html[dir="rtl"] .ext {
   overflow: hidden;
   color: var(--scene-ink);
   background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 58%, var(--sky-3) 100%);
-  transition: --sky-1, --sky-2, --sky-3, --sun, --sun-glow, --moon, --star, --far, --dune-1, --dune-2, --dune-3, --dune-4, --dune-hi, --stone-lit, --stone-shade, --nile-1, --nile-2, --glint, --leaf, --trunk, --sail, --sail-shade, --shadow, --scene-ink, --scene-muted, --scene-accent, --sun-on, --moon-on, --stars-on, --shadow-len, --glint-op, --sun-drop;
+  transition: --sky-1, --sky-2, --sky-3, --sun, --sun-glow, --moon, --star, --far, --dune-1, --dune-2, --dune-3,
+    --dune-4, --dune-hi, --stone-lit, --stone-shade, --nile-1, --nile-2, --glint, --leaf, --trunk, --sail, --sail-shade,
+    --shadow, --scene-ink, --scene-muted, --scene-accent, --sun-on, --moon-on, --stars-on, --shadow-len, --glint-op,
+    --sun-drop;
   transition-duration: 1.4s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -888,7 +892,16 @@ html[dir="rtl"] .skyline {
   inset: 0 0 40% 0;
   opacity: var(--stars-on);
   pointer-events: none;
-  background-image: radial-gradient(1.4px 1.4px at 12% 18%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 28% 42%, #fff4dc 50%, transparent 51%), radial-gradient(1.6px 1.6px at 46% 12%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 63% 30%, #fff4dc 50%, transparent 51%), radial-gradient(1.3px 1.3px at 78% 8%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 88% 36%, #fff4dc 50%, transparent 51%), radial-gradient(1.2px 1.2px at 6% 56%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 54% 60%, #fff4dc 50%, transparent 51%), radial-gradient(1.4px 1.4px at 35% 70%, #fff4dc 50%, transparent 51%), radial-gradient(1px 1px at 94% 64%, #fff4dc 50%, transparent 51%);
+  background-image: radial-gradient(1.4px 1.4px at 12% 18%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 42%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 46% 12%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1px 1px at 63% 30%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 78% 8%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 36%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 6% 56%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1px 1px at 54% 60%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 35% 70%, #fff4dc 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 64%, #fff4dc 50%, transparent 51%);
 }
 .hero-inner {
   position: relative;
@@ -899,14 +912,15 @@ html[dir="rtl"] .skyline {
   padding-block: clamp(36px, 6vw, 76px) calc(var(--scene-h) * 0.55);
 }
 .hero h1 {
-  font-size: clamp(44px, 5.4vw, 70px);
+  font-size: clamp(38px, 4.6vw, 62px);
   letter-spacing: -0.025em;
   margin-bottom: 24px;
 }
 html[lang="ar"] .hero h1 {
-  font-size: clamp(42px, 5.4vw, 70px);
+  font-size: clamp(38px, 4.8vw, 64px);
 }
 .hero h1 em {
+  font-style: normal;
   color: var(--terracotta);
 }
 .hero .lead {
@@ -1006,7 +1020,7 @@ html[dir="rtl"] .hero-note {
 }
 @keyframes birds-fly {
   0% {
-    transform: translate(-760px, 30px);
+    transform: translate(-80px, 30px);
     opacity: 0;
   }
   15%,
@@ -1014,7 +1028,7 @@ html[dir="rtl"] .hero-note {
     opacity: 0.55;
   }
   100% {
-    transform: translate(980px, -40px);
+    transform: translate(620px, -40px);
     opacity: 0;
   }
 }
@@ -1228,23 +1242,14 @@ html[dir="rtl"] .voyage svg {
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: v;
 }
 .values li {
-  counter-increment: v;
   display: grid;
-  grid-template-columns: 56px 1fr;
   padding-block: 22px;
   border-top: 1px solid var(--line);
 }
 .values li:last-child {
   border-bottom: 1px solid var(--line);
-}
-.values li::before {
-  content: "0" counter(v);
-  grid-row: span 2;
-  font: 28px/1 var(--font-display);
-  color: var(--terracotta);
 }
 .values b {
   font-size: 19px;
@@ -1296,8 +1301,7 @@ html[dir="rtl"] .voyage svg {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fffdf8;
-  box-shadow: var(--shadow);
+  background: #fff;
 }
 .event-body {
   display: flex;
@@ -1374,7 +1378,7 @@ html[dir="rtl"] .voyage svg {
 }
 .poster b {
   position: relative;
-  font: 400 clamp(30px, 3vw, 38px) / 1.05 var(--font-display);
+  font: 500 clamp(30px, 3vw, 38px) / 1.05 var(--font-display);
 }
 html[lang="ar"] .poster b {
   font-family: var(--font-arabic);
@@ -1456,7 +1460,7 @@ html[lang="ar"] .poster b {
   min-width: 0;
   padding: 10px 14px;
   border: 1px solid #ffffff40;
-  border-radius: 999px;
+  border-radius: 6px;
   background: #00000025;
   color: var(--on-dark);
   font-size: 14px;
@@ -1571,12 +1575,9 @@ details p {
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: w;
 }
 .join-ways a {
-  counter-increment: w;
   display: grid;
-  grid-template-columns: 44px 1fr;
   padding: 18px 20px;
   border: 1px solid #ffffff2a;
   border-radius: var(--radius);
@@ -1585,12 +1586,6 @@ details p {
 }
 .join-ways a:hover {
   background: #ffffff12;
-}
-.join-ways a::before {
-  content: "0" counter(w);
-  grid-row: span 2;
-  font: 24px/1.1 var(--font-display);
-  color: var(--gold);
 }
 .join-ways b {
   font-size: 19px;
@@ -1617,24 +1612,16 @@ details p {
 .link-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   height: 100%;
-  padding: 22px 24px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #fffdf8;
+  padding: 18px 0;
+  border-top: 2px solid var(--ink);
   text-decoration: none;
-  transition:
-    border-color 0.15s,
-    transform 0.15s;
 }
-.link-card:hover {
-  border-color: var(--maroon);
-  transform: translateY(-2px);
-}
-.link-card .num {
-  font: 20px/1 var(--font-display);
-  color: var(--terracotta);
+.link-card:hover b {
+  color: var(--maroon);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 .link-card b {
   font-size: 19px;
@@ -1658,9 +1645,8 @@ details p {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 28px;
-  border-radius: var(--radius);
-  background: var(--sand);
+  padding: 20px 0 0;
+  border-top: 2px solid var(--ink);
 }
 .steps li::before {
   content: counter(s);
@@ -1668,11 +1654,11 @@ details p {
   place-items: center;
   width: 40px;
   height: 40px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   border-radius: 50%;
   background: var(--maroon);
   color: var(--on-dark);
-  font-weight: 700;
+  font-weight: 600;
 }
 .steps b {
   font-size: 21px;
@@ -1730,14 +1716,14 @@ details p {
   top: 18px;
   inset-inline-end: 18px;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--gold);
   color: var(--maroon);
   font-size: 13px;
   font-weight: 700;
 }
 .prayer-grid b {
-  font: 400 30px/1.1 var(--font-display);
+  font: 500 30px/1.1 var(--font-display);
 }
 html[lang="ar"] .prayer-grid b {
   font-family: var(--font-arabic);
@@ -1776,7 +1762,7 @@ html[lang="ar"] .prayer-grid b {
   overflow: hidden;
   background: var(--bg);
   color: var(--fg);
-  font: 400 56px/1 var(--font-display);
+  font: 500 56px/1 var(--font-display);
 }
 .team-card[style*="--tone:1"] .portrait {
   --bg: var(--green);
@@ -1835,10 +1821,8 @@ html[lang] .team-card h2 {
 .card {
   display: flex;
   flex-direction: column;
-  padding: clamp(24px, 4vw, 40px);
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) * 1.3);
-  background: #fffdf8;
+  padding: 24px 0 8px;
+  border-top: 2px solid var(--ink);
 }
 .card.wide {
   grid-column: 1 / -1;

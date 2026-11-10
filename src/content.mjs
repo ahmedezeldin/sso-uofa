@@ -25,9 +25,9 @@ export const site = {
   volunteerWhatsApp: "",
   // Paste a newsletter sign-up link (e.g. a Google Form or Mailchimp page) when ready.
   newsletter: "",
-  // Stable identifier used inside calendar event UIDs. Never change it:
-  // subscribers' calendars use it to recognise events they already have.
-  calendarUidDomain: "ualberta-sudanese-club.classybirch16.chatgpt.site",
+  // Used inside calendar event IDs. Avoid changing it: subscribers' calendars use it
+  // to recognise events they already have.
+  calendarUidDomain: "sso-uofa.ahmedezeldin.com",
 };
 
 // ---------------------------------------------------------------------------
@@ -151,7 +151,11 @@ export const campusTools = [
 // Sudanese sayings; the footer shows a random one on each visit.
 // `en` is the English gloss, `note` the short Arabic explanation shown on Arabic pages.
 export const proverbs = [
-  { ar: "اللقمة الهنية بتكفي مية", en: "A meal shared with a good heart feeds a hundred.", note: "الأكل بالمحبة بيكفي الكل." },
+  {
+    ar: "اللقمة الهنية بتكفي مية",
+    en: "A meal shared with a good heart feeds a hundred.",
+    note: "الأكل بالمحبة بيكفي الكل.",
+  },
   { ar: "الجار قبل الدار", en: "Choose your neighbour before your house.", note: "الناس قبل المكان." },
   { ar: "إيد على إيد تجدع بعيد", en: "Hands together throw farther.", note: "بالتعاون بنوصل أبعد." },
   { ar: "البيت بيتك", en: "Make yourself at home. (Literally: the house is your house.)", note: "حبابك عشرة." },
@@ -159,15 +163,14 @@ export const proverbs = [
 
 // Words that scroll across the band under the hero. Entries with `lang: "ar"` show in Arabic on both pages.
 export const tickerWords = [
-  { text: L("Culture", "ثقافة") },
   { text: "لمة سودانية", lang: "ar" },
   { text: L("Shai bi laban", "شاي بلبن") },
-  { text: L("Connection", "تواصل") },
   { text: L("Legaimat", "لقيمات") },
   { text: "حبابك عشرة", lang: "ar" },
-  { text: L("Community", "مجتمع") },
   { text: L("Karkadeh", "كركدي") },
   { text: L("Ful on Fridays", "فول الجمعة") },
+  { text: L("Tabaldi juice", "عصير تبلدي") },
+  { text: "أهلاً وسهلاً", lang: "ar" },
 ];
 
 // ---------------------------------------------------------------------------

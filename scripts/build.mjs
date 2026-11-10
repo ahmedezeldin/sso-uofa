@@ -26,9 +26,13 @@ const ids = new Set();
 for (const e of events) {
   if (ids.has(e.id)) problems.push(`Duplicate event id "${e.id}"`);
   ids.add(e.id);
-  if (e.date && (!/^\d{4}-\d{2}-\d{2}$/.test(e.date) || new Date(e.date + "T12:00:00Z").toISOString().slice(0, 10) !== e.date))
+  if (
+    e.date &&
+    (!/^\d{4}-\d{2}-\d{2}$/.test(e.date) || new Date(e.date + "T12:00:00Z").toISOString().slice(0, 10) !== e.date)
+  )
     problems.push(`Event "${e.id}" has an invalid date "${e.date}" (use YYYY-MM-DD)`);
-  for (const k of ["title", "summary", "poster"]) if (!e[k]?.en || !e[k]?.ar) problems.push(`Event "${e.id}" is missing ${k} in English or Arabic`);
+  for (const k of ["title", "summary", "poster"])
+    if (!e[k]?.en || !e[k]?.ar) problems.push(`Event "${e.id}" is missing ${k} in English or Arabic`);
 }
 if (problems.length) {
   console.error("Content problems:\n  " + problems.join("\n  "));
@@ -55,7 +59,12 @@ function asset(p) {
 // Pages
 // ---------------------------------------------------------------------------
 function edmontonToday() {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Edmonton", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Edmonton",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
   const get = (k) => parts.find((x) => x.type === k).value;
   return `${get("year")}-${get("month")}-${get("day")}`;
 }
@@ -95,7 +104,11 @@ for (const lang of ["en", "ar"]) {
 }
 
 // 404 (GitHub Pages serves /404.html for every missing path; ar/404.html is its translation)
-pages["404"] = { path: "404.html", title: { en: "Page not found", ar: "الصفحة غير موجودة" }, description: { en: "Page not found.", ar: "الصفحة غير موجودة." } };
+pages["404"] = {
+  path: "404.html",
+  title: { en: "Page not found", ar: "الصفحة غير موجودة" },
+  description: { en: "Page not found.", ar: "الصفحة غير موجودة." },
+};
 for (const lang of ["en", "ar"]) {
   const c = context(lang);
   const html = layout(c, "404", notFoundPage(c))
@@ -117,15 +130,27 @@ redirect("volunteer.html", `${base}contact.html#volunteer`);
 redirect("gallery.html", `${base}events.html#past`);
 redirect("manage.html", base);
 // The merch preview was retired; send its old addresses home.
-for (const old of ["checkout.html", "product.html", "merch.html", "merch/tee.html", "merch/hoodie.html", "merch/tote.html"]) redirect(old, base);
-for (const old of ["merch.html", "merch/tee.html", "merch/hoodie.html", "merch/tote.html"]) redirect("ar/" + old, base + "ar/");
+for (const old of [
+  "checkout.html",
+  "product.html",
+  "merch.html",
+  "merch/tee.html",
+  "merch/hoodie.html",
+  "merch/tote.html",
+])
+  redirect(old, base);
+for (const old of ["merch.html", "merch/tee.html", "merch/hoodie.html", "merch/tote.html"])
+  redirect("ar/" + old, base + "ar/");
 
 // ---------------------------------------------------------------------------
 // Calendar feeds
 // ---------------------------------------------------------------------------
 const oldRevisions = fs.existsSync(revisionsFile) ? JSON.parse(fs.readFileSync(revisionsFile, "utf8")) : {};
 const revisions = {};
-const stampNow = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+const stampNow = new Date()
+  .toISOString()
+  .replace(/[-:]/g, "")
+  .replace(/\.\d{3}/, "");
 const dated = events.filter((e) => e.date).sort((a, b) => a.date.localeCompare(b.date));
 for (const e of dated) {
   const hash = crypto.createHash("sha256").update(JSON.stringify(e)).digest("hex");
@@ -133,7 +158,8 @@ for (const e of dated) {
   revisions[e.id] = prev?.hash === hash ? prev : { hash, stamp: stampNow, sequence: prev ? prev.sequence + 1 : 0 };
 }
 
-const icsText = (s) => s.replace(/<br>/g, " ").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+const icsText = (s) =>
+  s.replace(/<br>/g, " ").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
 function fold(line) {
   // RFC 5545: lines longer than 75 octets are folded with CRLF + space.
   const parts = [];
@@ -154,12 +180,29 @@ function fold(line) {
   return parts.join("\r\n");
 }
 function calendar(list) {
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SSO UofA//Community Calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:SSO UofA Events", "X-WR-TIMEZONE:America/Edmonton", "REFRESH-INTERVAL;VALUE=DURATION:PT12H", "X-PUBLISHED-TTL:PT12H"];
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//SSO UofA//Community Calendar//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "X-WR-CALNAME:SSO UofA Events",
+    "X-WR-TIMEZONE:America/Edmonton",
+    "REFRESH-INTERVAL;VALUE=DURATION:PT12H",
+    "X-PUBLISHED-TTL:PT12H",
+  ];
   for (const e of list) {
     const next = new Date(e.date + "T12:00:00Z");
     next.setUTCDate(next.getUTCDate() + 1);
     const rev = revisions[e.id];
-    const description = [e.summary.en, e.time && `Time: ${e.time.en}`, e.venue && `Where: ${e.venue.en}`, e.source && `Details: ${e.source}`].filter(Boolean).join("\n");
+    const description = [
+      e.summary.en,
+      e.time && `Time: ${e.time.en}`,
+      e.venue && `Where: ${e.venue.en}`,
+      e.source && `Details: ${e.source}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
     lines.push(
       "BEGIN:VEVENT",
       `UID:sso-${e.id}@${site.calendarUidDomain}`,
@@ -188,8 +231,19 @@ fs.writeFileSync(revisionsFile, JSON.stringify(revisions, null, 2) + "\n");
 // ---------------------------------------------------------------------------
 // Sitemap, robots, GitHub Pages marker
 // ---------------------------------------------------------------------------
-const urls = Object.keys(pages).flatMap((key) => ["en", "ar"].map((l) => site.url + context(l).urlFor(key).slice(base.length - 1)));
-write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`);
+const urls = Object.keys(pages).flatMap((key) =>
+  ["en", "ar"].map(
+    (l) =>
+      site.url +
+      context(l)
+        .urlFor(key)
+        .slice(base.length - 1),
+  ),
+);
+write(
+  "sitemap.xml",
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`,
+);
 write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
 write(".nojekyll", "");
 
@@ -198,7 +252,9 @@ write(".nojekyll", "");
 // ---------------------------------------------------------------------------
 const broken = [];
 function walk(dir) {
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? walk(path.join(dir, d.name)) : [path.join(dir, d.name)]));
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .flatMap((d) => (d.isDirectory() ? walk(path.join(dir, d.name)) : [path.join(dir, d.name)]));
 }
 for (const file of walk(out).filter((f) => f.endsWith(".html"))) {
   const html = fs.readFileSync(file, "utf8");
@@ -208,7 +264,8 @@ for (const file of walk(out).filter((f) => f.endsWith(".html"))) {
     if (!target.startsWith(base)) continue;
     const clean = decodeURIComponent(target.split(/[?#]/)[0].slice(base.length));
     const resolved = path.join(out, clean || "index.html");
-    const exists = fs.existsSync(resolved) && (fs.statSync(resolved).isFile() || fs.existsSync(path.join(resolved, "index.html")));
+    const exists =
+      fs.existsSync(resolved) && (fs.statSync(resolved).isFile() || fs.existsSync(path.join(resolved, "index.html")));
     if (!exists) broken.push(`${path.relative(out, file)} → ${url}`);
   }
 }

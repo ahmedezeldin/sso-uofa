@@ -1,9 +1,29 @@
 // Small enhancements on top of the pre-rendered pages. Everything works without
-// this file; it only adds the mobile menu, live event sorting, copy buttons,
-// prayer times and gallery thumbnails.
+// this file; it adds the mobile menu, live event sorting, the copy button, prayer
+// times, the scroll effects and the easter eggs.
 (() => {
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+
+  // The club lives on Edmonton time, whatever the visitor's own time zone.
+  const edmonton = (when = new Date()) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Edmonton",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      weekday: "long",
+      hourCycle: "h23",
+    }).formatToParts(when);
+    const get = (type) => parts.find((p) => p.type === type).value;
+    return {
+      date: `${get("year")}-${get("month")}-${get("day")}`,
+      minutes: Number(get("hour")) * 60 + Number(get("minute")),
+      weekday: get("weekday"),
+    };
+  };
 
   // Mobile menu ---------------------------------------------------------------
   const toggle = $(".menu-toggle");
@@ -34,11 +54,7 @@
   );
 
   // Keep upcoming/past event lists correct between deploys -------------------
-  const today = (() => {
-    const p = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Edmonton", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
-    const get = (k) => p.find((x) => x.type === k).value;
-    return `${get("year")}-${get("month")}-${get("day")}`;
-  })();
+  const today = edmonton().date;
   // On the home page, events that just ended join the "recent" list instead.
   const pastList = $('[data-event-list="past"]') || $('[data-event-list="recent"]');
   $$('[data-event-list="upcoming"]').forEach((list) => {
@@ -77,13 +93,19 @@
     const load = async () => {
       status.textContent = prayer.dataset.msgLoading;
       try {
-        const res = await fetch("https://api.msauofa.ca/prayer-times", { cache: "no-store", signal: AbortSignal.timeout(10000) });
+        const res = await fetch("https://api.msauofa.ca/prayer-times", {
+          cache: "no-store",
+          signal: AbortSignal.timeout(10000),
+        });
         if (!res.ok) throw Error(res.status);
         const data = await res.json();
         if (!keys.every((k) => timePattern.test(data[k]))) throw Error("Unexpected response");
-        const fmt = new Intl.DateTimeFormat(prayer.dataset.locale, { timeZone: "UTC", hour: "numeric", minute: "2-digit" });
-        const now = new Intl.DateTimeFormat("en-GB", { timeZone: "America/Edmonton", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date());
-        const nowMinutes = Number(now.slice(0, 2)) * 60 + Number(now.slice(3, 5));
+        const fmt = new Intl.DateTimeFormat(prayer.dataset.locale, {
+          timeZone: "UTC",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        const nowMinutes = edmonton().minutes;
         let nextFound = false;
         for (const k of keys) {
           const [, h, m, ampm] = data[k].match(timePattern);
@@ -160,9 +182,12 @@
       }),
     );
     // Follow the real sky as the day goes on, unless someone has been playing with the sun.
-    setInterval(() => {
-      if (!hero.dataset.phaseLocked && window.ssoSkyPhase) hero.dataset.phase = window.ssoSkyPhase();
-    }, 5 * 60 * 1000);
+    setInterval(
+      () => {
+        if (!hero.dataset.phaseLocked && window.ssoSkyPhase) hero.dataset.phase = window.ssoSkyPhase();
+      },
+      5 * 60 * 1000,
+    );
   }
 
   const flagConfetti = () => {
@@ -206,15 +231,15 @@
   }
 
   // Jumu'ah Mubarak on Fridays (Edmonton time).
-  const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/Edmonton", weekday: "long" }).format(new Date());
-  if (weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
+  if (edmonton().weekday === "Friday") $$(".friday").forEach((el) => (el.hidden = false));
 
   // Living illustration ------------------------------------------------------
   // On narrow screens, anchor the hero landscape on the pyramids side so they stay in view.
   const scene = $(".hero-scene");
   if (scene) {
     const narrow = matchMedia("(max-width: 700px)");
-    const anchor = () => scene.setAttribute("preserveAspectRatio", narrow.matches ? "xMaxYMax slice" : "xMidYMax slice");
+    const anchor = () =>
+      scene.setAttribute("preserveAspectRatio", narrow.matches ? "xMaxYMax slice" : "xMidYMax slice");
     narrow.addEventListener("change", anchor);
     anchor();
   }
@@ -233,12 +258,16 @@
       if (track) track.style.transform = `translateX(${(-(scrollY * 0.45) % (track.scrollWidth / 2)).toFixed(1)}px)`;
       queued = false;
     };
-    addEventListener("scroll", () => {
-      if (!queued) {
-        queued = true;
-        requestAnimationFrame(move);
-      }
-    }, { passive: true });
+    addEventListener(
+      "scroll",
+      () => {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(move);
+        }
+      },
+      { passive: true },
+    );
   }
 
   // The felucca in the header sails as far along the Nile as you've read.
@@ -255,7 +284,9 @@
 
   // Content rises into view, a little staggered within each group.
   if ("IntersectionObserver" in window && !reduceMotion) {
-    const targets = $$(".section-head, .values li, .event-card, .link-card, .steps li, .team-card, .card, .subscribe, .prayer-grid li, .join-ways li, .faq-list details, .empty-state, .next-note");
+    const targets = $$(
+      ".section-head, .values li, .event-card, .link-card, .steps li, .team-card, .card, .subscribe, .prayer-grid li, .join-ways li, .faq-list details, .empty-state, .next-note",
+    );
     const seen = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
